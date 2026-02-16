@@ -1,0 +1,56 @@
+{
+  "code": 200,
+  "code_message": "A requisição foi processada com sucesso.",
+  "errors": [],
+  "header": {
+    "api_version": "v2",
+    "api_version_full": "2.2.34-20260212164923",
+    "product": "Consultas",
+    "service": "receita-federal/pgfn/nova",
+    "parameters": {
+      "cnpj": "09157307000175"
+    },
+    "client_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "token_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "billable": true,
+    "price": "0.26",
+    "requested_at": "2026-02-12T17:37:00.000-03:00",
+    "elapsed_time_in_milliseconds": 17125,
+    "remote_ip": "186.250.34.148",
+    "signature": "jQuUL8DVhinF9VVmLSUybvbCu9P9hnBBZ2tCq87caqtqd16luv8Ikp910kCY4HHlxj3cgCImApcjhPwRGRT/iliMNWTOJfZ8QoQ/qg=="
+  },
+  "data_count": 1,
+  "data": [
+    {
+      "certidao": "CERTIDÃO NEGATIVA DE DÉBITOS RELATIVOS AOS TRIBUTOS FEDERAIS E À DÍVIDA ATIVA DA UNIÃO",
+      "certidao_codigo": "9462.A242.A22B.C9E4",
+      "cnpj": "09.157.307/0001-75",
+      "cnpj_situacao": null,
+      "comprovante_tipo": "pdf",
+      "conseguiu_emitir_certidao_negativa": true,
+      "consulta_comprovante": "9462.A242.A22B.C9E4",
+      "consulta_datahora": "12/02/2026 17:36:47",
+      "cpf": null,
+      "debitos_pgfn": false,
+      "debitos_rfb": false,
+      "descricao": null,
+      "emissao_data": "12/02/2026",
+      "mensagem": "CERTIDÃO NEGATIVA DE DÉBITOS RELATIVOS AOS TRIBUTOS FEDERAIS E À DÍVIDA ATIVA DA UNIÃO",
+      "nome": "ORGANIZACAO SOLIDARIA DE SERVICO SOCIAL, NUTRICIONAL, EDUCACIONAL,",
+      "normalizado_cnpj": "09157307000175",
+      "normalizado_consulta_datahora": "12/02/2026 17:36:47",
+      "normalizado_cpf": "",
+      "observacoes": null,
+      "razao_social": "ORGANIZACAO SOLIDARIA DE SERVICO SOCIAL, NUTRICIONAL, EDUCACIONAL,",
+      "situacao": null,
+      "tipo": null,
+      "validade": "11/08/2026",
+      "validade_data": "11/08/2026",
+      "validade_prorrogada": null,
+      "site_receipt": "https://us-central1-infosimples-data.cloudfunctions.net/infosimples-storage/P1Ty4S-RNRS-Dcmg-4Q_Q9Rob8NJYtgjFNrgk37toUg=/1771533420/t9P81c/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2luZm9zaW1wbGVzLWFwaS10bXAvYXBpL3JlY2VpdGEtZmVkZXJhbC9wZ2ZuL25vdmEvMjAyNjAyMTIxNzM3MDAvb0dyemNWVHBzOUNWaXlweWt5dno5cDdFRlZ6QTRtSTEvZmFiOWYxNDE4YTRkZjk4ODAxZWYyNDA5MDhhZTg2NDZfMF9hdU0=.pdf"
+    }
+  ],
+  "site_receipts": [
+    "https://us-central1-infosimples-data.cloudfunctions.net/infosimples-storage/P1Ty4S-RNRS-Dcmg-4Q_Q9Rob8NJYtgjFNrgk37toUg=/1771533420/t9P81c/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2luZm9zaW1wbGVzLWFwaS10bXAvYXBpL3JlY2VpdGEtZmVkZXJhbC9wZ2ZuL25vdmEvMjAyNjAyMTIxNzM3MDAvb0dyemNWVHBzOUNWaXlweWt5dno5cDdFRlZ6QTRtSTEvZmFiOWYxNDE4YTRkZjk4ODAxZWYyNDA5MDhhZTg2NDZfMF9hdU0=.pdf"
+  ]
+}

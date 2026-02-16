@@ -1,0 +1,492 @@
+/* 
+   IAudit Premium UI - Mega Prompt Implementation 
+   Style: Clean Modernism / Tech-Minimalism
+*/
+
+/* ─── FONTS ────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ─── RESET & CORE VARIABLES ───────────────────────────────────────── */
+:root {
+    --bg-deep: #0F0F0F;
+    --bg-card: rgba(255, 255, 255, 0.02);
+    --bg-glass: rgba(15, 15, 15, 0.6);
+
+    --text-primary: #FFFFFF;
+    --text-secondary: #E2E8F0;
+    /* Brightened from #CBD5E1 */
+    --text-accent: #93e3ff;
+    /* Brightened from #7dd3fc */
+
+    --primary-gradient: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    --glow-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-highlight: rgba(255, 255, 255, 0.1);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 24px;
+    --radius-pill: 9999px;
+
+    /* Smart UI Tokens */
+    --fluid-h1: clamp(1.8rem, 4vw + 1rem, 3.5rem);
+    --skeleton-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* ─── GLOBAL OVERRIDES ─────────────────────────────────────────────── */
+/* Force Deep Dark Background with Subtle Noise */
+.stApp {
+    background-color: var(--bg-deep) !important;
+    background-image: radial-gradient(circle at 50% 0%, #1e1e24 0%, #0F0F0F 60%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E") !important;
+    background-attachment: fixed;
+    background-size: cover, auto;
+    font-family: 'Inter', sans-serif !important;
+    color: var(--text-secondary) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.02em !important;
+}
+
+p,
+span,
+div,
+label {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* ─── HEADER & NAVIGATION ──────────────────────────────────────────── */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #0a0a0a !important;
+    border-right: 1px solid var(--border-subtle);
+}
+
+section[data-testid="stSidebar"] h1 {
+    font-size: 1.5rem !important;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800 !important;
+}
+
+/* ─── COMPONENTS: BUTTONS (Pill + Glow) ────────────────────────────── */
+.stButton button {
+    border-radius: var(--radius-pill) !important;
+    border: none !important;
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-highlight) !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    padding: 0.6rem 1.5rem !important;
+}
+
+.stButton button:hover {
+    background: var(--primary-gradient) !important;
+    box-shadow: var(--glow-shadow) !important;
+    transform: translateY(-2px);
+    border-color: transparent !important;
+}
+
+/* Primary Button Override */
+.stButton button[kind="primary"] {
+    background: var(--primary-gradient) !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+/* ─── COMPONENTS: CARDS (Glassmorphism) ────────────────────────────── */
+div[data-testid="stMetric"],
+.glass-card {
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 1.5rem !important;
+    transition: transform 0.3s ease, boarder-color 0.3s ease;
+}
+
+div[data-testid="stMetric"]:hover,
+.glass-card:hover {
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+div[data-testid="stMetricLabel"] {
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary) !important;
+}
+
+div[data-testid="stMetricValue"] {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 2rem !important;
+    color: var(--text-primary) !important;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* ─── BENTO GRID UTILITIES ─────────────────────────────────────────── */
+.bento-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.bento-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.bento-item:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.bento-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bento-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ─── HERO SECTION ─────────────────────────────────────────────────── */
+.hero-container {
+    padding: 6rem 0 8rem 0;
+    position: relative;
+    overflow: visible;
+}
+
+.hero-visual {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 300px;
+    perspective: 1000px;
+    z-index: 0;
+}
+
+.cube {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: rotate 20s infinite linear;
+}
+
+.face {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.front {
+    transform: translateZ(60px);
+}
+
+.back {
+    transform: rotateY(180deg) translateZ(60px);
+}
+
+.right {
+    transform: rotateY(90deg) translateZ(60px);
+}
+
+.left {
+    transform: rotateY(-90deg) translateZ(60px);
+}
+
+.top {
+    transform: rotateX(90deg) translateZ(60px);
+}
+
+.bottom {
+    transform: rotateX(-90deg) translateZ(60px);
+}
+
+@keyframes rotate {
+    from {
+        transform: rotateX(0) rotateY(0);
+    }
+
+    to {
+        transform: rotateX(360deg) rotateY(360deg);
+    }
+}
+
+.hero-title {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.1));
+}
+
+.hero-subtitle {
+    font-size: 1.35rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.hero-accent {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 40%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ─── INPUTS & FORMS ───────────────────────────────────────────────── */
+div[data-testid="stTextInput"] input,
+div[data-testid="stSelectbox"] div[data-baseweb="select"] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+}
+
+div[data-testid="stTextInput"] input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* ─── TABLES ───────────────────────────────────────────────────────── */
+div[data-testid="stDataFrame"] {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+div[data-testid="stDataFrame"] div[class*="stDataFrame"] {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Custom Table Style from previous steps (iaudit-table) - Enhanced */
+.iaudit-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(10px);
+    margin-bottom: 1.5rem;
+}
+
+.iaudit-table td {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+.iaudit-table td.label {
+    width: 35%;
+    background-color: rgba(255, 255, 255, 0.02);
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.iaudit-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.highlight-success {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80 !important;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.75rem !important;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.highlight-error {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171 !important;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.75rem !important;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* ─── SMART UI: SKELETON LOADERS ────────────────────────────────────── */
+.skeleton {
+    background: var(--skeleton-bg);
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.03) 25%,
+            rgba(255, 255, 255, 0.08) 50%,
+            rgba(255, 255, 255, 0.03) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-pulse 1.5s infinite ease-in-out;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    min-height: 1em;
+}
+
+@keyframes skeleton-pulse {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    width: 100%;
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-title {
+    width: 60%;
+    height: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* ─── SMART UI: FLUID TYPOGRAPHY & CONTRAST ───────────────────────── */
+.fluid-title {
+    font-size: var(--fluid-h1) !important;
+    line-height: 1.1 !important;
+}
+
+.contrast-safe-light {
+    color: #FFFFFF !important;
+}
+
+.contrast-safe-dark {
+    color: #0F0F0F !important;
+}
+
+/* ─── SELF-HEALING INPUTS ─────────────────────────────────────────── */
+/* Smooth transition for auto-corrected inputs */
+div[data-testid="stTextInput"] input {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease !important;
+}
+
+/* --- NEW UX ENHANCEMENTS ------------------------------------------ */
+.iaudit-header {
+    background: linear-gradient(90deg, rgba(30, 64, 175, 0.4) 0%, rgba(30, 58, 138, 0.1) 100%);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.empresas-title {
+    font-size: 3rem !important;
+    font-weight: 800 !important;
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 !important;
+}
+
+.icon-float {
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+
+/* --- BENTO GRID --------------------------------------------------- */
+.bento-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(160px, auto);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .bento-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .bento-container {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "code": 615,
+  "code_message": "O site ou aplicativo de origem parece estar indisponível.",
+  "errors": [
+    "A API foi pausada temporariamente. O motivo mais provável para isso ter sido feito é instabilidade na fonte de origem. Se você notou que a fonte de origem está se comportando normalmente, entre em contato com o suporte via email."
+  ],
+  "header": {
+    "api_version": "v2",
+    "api_version_full": "2.2.34-20260212164923",
+    "product": "Consultas",
+    "service": "sefaz/pr/certidao-debitos",
+    "parameters": {
+      "cnpj": "09157307000175"
+    },
+    "client_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "token_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "billable": false,
+    "price": "0.0",
+    "requested_at": "2026-02-12T17:37:09.533-03:00",
+    "elapsed_time_in_milliseconds": null,
+    "remote_ip": "186.250.34.148",
+    "signature": "e/F6Dym+Nk9zNgSMShOGMI1EqE/YJ5GRyHxB6qjUDAcqWAIy/OenCdGan9padh8eVlts+iV8DWqGK9A0iAly0SGz91UB2PTMvuelrA=="
+  },
+  "data_count": 0,
+  "data": [],
+  "site_receipts": []
+}

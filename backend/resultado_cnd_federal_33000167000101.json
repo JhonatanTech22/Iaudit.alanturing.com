@@ -1,0 +1,29 @@
+{
+  "code": 611,
+  "code_message": "Os dados estão incompletos no site ou aplicativo de origem e não puderam ser retornados.",
+  "errors": [
+    "As informações disponíveis na Receita Federal e na Procuradoria-Geral da Fazenda Nacional sobre o contribuinte 33.000.167/0001-01 são insuficientes para emitir a certidão pela Internet."
+  ],
+  "header": {
+    "api_version": "v2",
+    "api_version_full": "2.2.34-20260212164923",
+    "product": "Consultas",
+    "service": "receita-federal/pgfn/nova",
+    "parameters": {
+      "cnpj": "33000167000101"
+    },
+    "client_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "token_name": "Alan Turing Inteligencia A Servico De Todos Ltda",
+    "billable": true,
+    "price": "0.26",
+    "requested_at": "2026-02-12T17:24:46.000-03:00",
+    "elapsed_time_in_milliseconds": 19904,
+    "remote_ip": "186.250.34.148",
+    "signature": "RFtvnVNhqNEh52abV8nk8m5y/9ssJuDZbmN22Ewcq3OjQ/3Mnw+7uAKD6pm+CokMadbsaDvt7BQ7I0+5zZjAhIFJ/Pg+tkVEcgXUAw=="
+  },
+  "data_count": 0,
+  "data": [],
+  "site_receipts": [
+    "https://us-central1-infosimples-data.cloudfunctions.net/infosimples-storage/tv_s5A6MCar6WmfOEOM32i_N3PbK5f5PcM92wY1NAzc=/1771532686/d9nir4/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2luZm9zaW1wbGVzLWFwaS10bXAvYXBpL3JlY2VpdGEtZmVkZXJhbC9wZ2ZuL25vdmEvMjAyNjAyMTIxNzI0NDYvMXljNGhYSjFQNVh6dTRuY080c3NtQ0RMcFNibVQyeFkvYmJkZTBiYmMyODc2NjAxZGQzNjliN2RlNTE3MDZhM2JfMF9MN0E=.html"
+  ]
+}
