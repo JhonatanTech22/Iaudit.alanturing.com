@@ -2,6 +2,7 @@
 echo ========================================================
 echo   CONFIGURACAO DE PRODUCAO - SETUP SSL & NGINX
 echo ========================================================
+cd /d "%~dp0"
 echo.
 echo ESTE SCRIPT PRECISA SER EXECUTADO COMO ADMINISTRADOR.
 echo Se nao estiver como Admin, feche e clique com botao direito -> Executar como Administrador.
@@ -29,11 +30,14 @@ if %errorlevel% neq 0 (
 
 echo.
 echo [3/5] Iniciando API Backend (Porta 8000)...
-start /B "IAudit Backend" python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+cd backend
+start /B "IAudit Backend" python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+cd ..
 
 echo.
 echo [4/5] Iniciando Frontend Streamlit (Porta 8501)...
-start /B "IAudit Frontend" streamlit run frontend/App.py --server.port 8501 --server.address 127.0.0.1
+set BACKEND_URL=https://iaudit.allanturing.com
+start /B "IAudit Frontend" streamlit run frontend/app.py --server.port 8501 --server.address 127.0.0.1
 
 echo.
 echo [5/5] Iniciando Nginx (Reverse Proxy 80/443 -> 8501)...

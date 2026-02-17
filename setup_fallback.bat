@@ -2,6 +2,7 @@
 echo ========================================================
 echo   CONFIGURACAO DE FALLBACK - SSL AUTO-ASSINADO
 echo ========================================================
+cd /d "%~dp0"
 echo.
 echo [1/4] Gerando Certificado Auto-Assinado...
 python generate_cert.py
@@ -18,8 +19,11 @@ taskkill /F /IM nginx.exe >nul 2>&1
 
 echo.
 echo [4/4] Iniciando Servicos (HTTPS)...
-start /B "IAudit Backend" python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
-start /B "IAudit Frontend" streamlit run frontend/App.py --server.port 8501 --server.address 127.0.0.1
+set BACKEND_URL=http://127.0.0.1:8000
+cd backend
+start /B "IAudit Backend" python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+cd ..
+start /B "IAudit Frontend" streamlit run frontend/app.py --server.port 8501 --server.address 127.0.0.1
 
 cd c:\nginx
 start nginx.exe
