@@ -14,7 +14,7 @@ services:
     # REMOVIDO: env_file (não existe o arquivo)
     # REMOVIDO: container_name (o Swarm não aceita nomes fixos)
     volumes:
-      - ./credentials:/app/credentials:ro
+      - credentials_data:/app/credentials
     deploy:
       restart_policy:
         condition: on-failure
@@ -34,3 +34,5 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+        volumes:
+          credentials_data:
