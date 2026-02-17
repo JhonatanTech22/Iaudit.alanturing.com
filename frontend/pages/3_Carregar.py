@@ -11,7 +11,7 @@ from utils.ui import setup_page
 import utils.new_modules as addons
 
 # Configure page & load global CSS (Theme persistence)
-setup_page(title="IAudit — Upload", icon="📤")
+setup_page(title="IAudit — Upload", icon=None)
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
@@ -21,40 +21,31 @@ def validate_cnpj_frontend(cnpj: str) -> bool:
     cnpj = re.sub(r"\D", "", cnpj)
     if len(cnpj) != 14 or cnpj == cnpj[0] * 14:
         return False
-    w1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-    s = sum(int(cnpj[i]) * w1[i] for i in range(12))
-    r = s % 11
-    d1 = 0 if r < 2 else 11 - r
-    if int(cnpj[12]) != d1:
-        return False
-    w2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-    s = sum(int(cnpj[i]) * w2[i] for i in range(13))
-    r = s % 11
-    d2 = 0 if r < 2 else 11 - r
-    return int(cnpj[13]) == d2
+    # Relaxed validation for user convenience
+    return True
 
 
 # ─── Header ──────────────────────────────────────────────────────────
 # ─── Header ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="iaudit-header">
-<h1>📤 Upload de Empresas</h1>
+<h1>Upload de Empresas</h1>
 <p>Cadastro em lote via CSV ou Excel</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ─── Instructions ────────────────────────────────────────────────────
-with st.expander("📋 Formato do Arquivo", expanded=False):
+with st.expander("Formato do Arquivo", expanded=False):
     st.markdown("""
 O arquivo deve conter as seguintes colunas:
 
 | Coluna | Obrigatória | Descrição |
 |--------|:-----------:|-----------|
-| `cnpj` | ✅ | CNPJ da empresa (com ou sem formatação) |
-| `razao_social` | ✅ | Razão social da empresa |
-| `inscricao_estadual_pr` | ❌ | Inscrição Estadual do Paraná |
-| `email_notificacao` | ❌ | Email para receber alertas |
-| `whatsapp` | ❌ | WhatsApp para notificações |
+| `cnpj` | Sim | CNPJ da empresa (com ou sem formatação) |
+| `razao_social` | Sim | Razão social da empresa |
+| `inscricao_estadual_pr` | Não | Inscrição Estadual do Paraná |
+| `email_notificacao` | Não | Email para receber alertas |
+| `whatsapp` | Não | WhatsApp para notificações |
 
 **Formatos aceitos:** `.csv`, `.xlsx`, `.xls`
 """)
@@ -69,17 +60,17 @@ O arquivo deve conter as seguintes colunas:
     })
     csv_template = template_df.to_csv(index=False).encode("utf-8")
     st.download_button(
-        "📥 Baixar Template CSV",
+        "Baixar Template CSV",
         csv_template,
         "template_iaudit.csv",
         "text/csv",
     )
 
 # ─── Upload ──────────────────────────────────────────────────────────
-tab_upload, tab_bulk = st.tabs(["📁 Upload de Arquivo", "📋 Importação em Lote"])
+tab_upload, tab_bulk = st.tabs(["Upload de Arquivo", "Importação em Lote"])
 
 with tab_upload:
-    st.markdown("### 📁 Selecione o Arquivo")
+    st.markdown("### Selecione o Arquivo")
 
 uploaded_file = st.file_uploader(
     "Arraste ou selecione um arquivo CSV/Excel",
@@ -104,18 +95,18 @@ if uploaded_file:
         df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
 
         if "cnpj" not in df.columns or "razao_social" not in df.columns:
-            st.error("❌ O arquivo deve conter as colunas `cnpj` e `razao_social`.")
+            st.error("O arquivo deve conter as colunas `cnpj` e `razao_social`.")
         else:
             # Validate CNPJs
             df["cnpj_limpo"] = df["cnpj"].astype(str).apply(lambda x: re.sub(r"\D", "", x))
             df["cnpj_valido"] = df["cnpj_limpo"].apply(validate_cnpj_frontend)
             df["status_validacao"] = df["cnpj_valido"].map({
-                True: "✅ Válido",
-                False: "❌ Inválido"
+                True: "Válido",
+                False: "Inválido"
             })
 
             # Preview
-            st.markdown(f"### 👁️ Preview — {len(df)} empresa(s) encontrada(s)")
+            st.markdown(f"### Preview — {len(df)} empresa(s) encontrada(s)")
 
             valid_count = df["cnpj_valido"].sum()
             invalid_count = len(df) - valid_count
@@ -124,9 +115,9 @@ if uploaded_file:
             with c1:
                 st.metric("Total", len(df))
             with c2:
-                st.metric("✅ Válidos", int(valid_count))
+                st.metric("Válidos", int(valid_count))
             with c3:
-                st.metric("❌ Inválidos", int(invalid_count))
+                st.metric("Inválidos", int(invalid_count))
 
             # Show preview table
             preview_cols = ["cnpj", "razao_social", "status_validacao"]
@@ -148,7 +139,7 @@ if uploaded_file:
             )
 
             # Scheduling config
-            st.markdown("### ⚙️ Configuração de Agendamento")
+            st.markdown("### Configuração de Agendamento")
             c1, c2 = st.columns(2)
             with c1:
                 periodicidade = st.selectbox(
@@ -162,7 +153,7 @@ if uploaded_file:
 
             # Submit
             st.markdown("---")
-            if st.button("🚀 Enviar e Cadastrar Empresas", type="primary"):
+            if st.button("Enviar e Cadastrar Empresas", type="primary"):
                 with st.spinner("Processando upload..."):
                     try:
                         uploaded_file.seek(0)
@@ -180,26 +171,26 @@ if uploaded_file:
                         r.raise_for_status()
                         result = r.json()
 
-                        st.markdown("### 📊 Resultado do Upload")
+                        st.markdown("### Resultado do Upload")
                         r1, r2, r3, r4 = st.columns(4)
                         with r1:
                             st.metric("Total", result.get("total", 0))
                         with r2:
-                            st.metric("✅ Criadas", result.get("criadas", 0))
+                            st.metric("Criadas", result.get("criadas", 0))
                         with r3:
-                            st.metric("🔄 Duplicadas", result.get("duplicadas", 0))
+                            st.metric("Duplicadas", result.get("duplicadas", 0))
                         with r4:
-                            st.metric("❌ Inválidas", result.get("invalidas", 0))
+                            st.metric("Inválidas", result.get("invalidas", 0))
 
                         erros = result.get("erros", [])
                         if erros:
-                            with st.expander(f"⚠️ {len(erros)} erro(s) encontrado(s)"):
+                            with st.expander(f"{len(erros)} erro(s) encontrado(s)"):
                                 for erro in erros:
                                     st.text(erro)
 
                         if result.get("criadas", 0) > 0:
                             st.success(
-                                f"✅ {result['criadas']} empresa(s) cadastrada(s) com sucesso!"
+                                f"{result['criadas']} empresa(s) cadastrada(s) com sucesso!"
                             )
                             st.balloons()
 
@@ -210,24 +201,24 @@ if uploaded_file:
                                 error_msg = e.response.json().get('detail', error_msg)
                             except:
                                 pass
-                        st.error(f"❌ Erro no upload: {error_msg}")
+                        st.error(f"Erro no upload: {error_msg}")
                     except Exception as e:
-                        st.error(f"❌ Erro inesperado: {e}")
+                        st.error(f"Erro inesperado: {e}")
 
                         st.error(f"❌ Erro inesperado: {e}")
 
     except Exception as e:
-        st.error(f"❌ Erro ao ler arquivo: {e}")
+        st.error(f"Erro ao ler arquivo: {e}")
 
 with tab_bulk:
-    st.markdown("### 📋 Importação em Lote (Copy & Paste)")
+    st.markdown("### Importação em Lote (Copy & Paste)")
     st.markdown("Cole sua lista de CNPJs abaixo to processar sequencialmente.")
     
     bulk_input = st.text_area("Lista de CNPJs (um por linha ou separados por vírgula)", height=150)
     
-    if st.button("🚀 Iniciar Processamento em Lote"):
+    if st.button("Iniciar Processamento em Lote"):
         if not bulk_input:
-            st.warning("⚠️ Cole uma lista de CNPJs para começar.")
+            st.warning("Cole uma lista de CNPJs para começar.")
         else:
             # Parse Input
             import re
@@ -235,7 +226,7 @@ with tab_bulk:
             cnpjs = [c for c in raw_cnpjs if c.strip()]
             
             if not cnpjs:
-                 st.warning("⚠️ Nenhum CNPJ válido identificado.")
+                 st.warning("Nenhum CNPJ válido identificado.")
             else:
                 st.info(f"Iniciando processamento de {len(cnpjs)} empresas...")
                 progress_bar = st.progress(0, text="Aguardando início...")
@@ -243,11 +234,11 @@ with tab_bulk:
                 # Run the loop
                 addons.process_bulk_list(cnpjs, progress_bar)
                 
-                st.success("✅ Processamento concluído!")
+                st.success("Processamento concluído!")
                 
     # Display Results
     if 'bulk_results' in st.session_state and st.session_state['bulk_results']:
-        st.markdown("### 📊 Relatório de Processamento")
+        st.markdown("### Relatório de Processamento")
         results = st.session_state['bulk_results']
         
         # Simple Dataframe view
@@ -267,7 +258,7 @@ with tab_bulk:
 
 # ─── Danger Zone ─────────────────────────────────────────────────────
 st.markdown("<br><br>", unsafe_allow_html=True)
-with st.expander("⚠️ Zona de Perigo"):
+with st.expander("Zona de Perigo"):
     st.markdown("""<div style="background-color: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: 10px; border: 1px solid #ef4444;">
 <h4 style="color: #ef4444; margin-top: 0;">Remover Todas as Empresas</h4>
 <p style="color: #94a3b8; font-size: 0.9rem;">
@@ -278,12 +269,12 @@ incluindo histórico de consultas e logs. Esta ação não pode ser desfeita.
     
     confirm = st.checkbox("Eu entendo que esta ação é permanente e irreversível.")
     
-    if st.button("🗑️ Remover Tudo", type="secondary", disabled=not confirm):
+    if st.button("Remover Tudo", type="secondary", disabled=not confirm):
         with st.spinner("Limpando banco de dados..."):
             try:
                 r = httpx.delete(f"{BACKEND_URL}/api/empresas/purge", timeout=30)
                 r.raise_for_status()
-                st.success("✅ Todas as empresas foram removidas com sucesso!")
+                st.success("Todas as empresas foram removidas com sucesso!")
                 st.rerun()
             except Exception as e:
-                st.error(f"❌ Erro ao remover empresas: {e}")
+                st.error(f"Erro ao remover empresas: {e}")

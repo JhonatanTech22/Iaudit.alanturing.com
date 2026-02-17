@@ -46,7 +46,7 @@ def load_css():
         except Exception as e:
             st.error(f"Erro ao carregar tema visual (style.css): {e}")
 
-def setup_page(title="IAudit", icon="🔍", layout="wide"):
+def setup_page(title="IAudit", icon=None, layout="wide"):
     """
     Configures the page settings and loads global CSS.
     Should be called at the start of every Streamlit script.

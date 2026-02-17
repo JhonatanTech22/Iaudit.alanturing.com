@@ -8,7 +8,7 @@ import os
 from utils.ui import setup_page
 
 # Configure page & load global CSS (Theme persistence)
-setup_page(title="IAudit — Detalhes", icon="🔍")
+setup_page(title="IAudit — Detalhes", icon=None)
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
@@ -17,10 +17,10 @@ def fetch(endpoint: str, params: dict | None = None, timeout: int = 60):
     try:
         r = httpx.get(f"{BACKEND_URL}{endpoint}", params=params, timeout=timeout)
         if r.status_code == 404:
-            st.toast("⚠️ Empresa não encontrada na base da Receita Federal", icon="🔍")
+            st.toast("Empresa não encontrada na base da Receita Federal", icon=None)
             return None
         elif r.status_code >= 500:
-            st.toast("🚨 Erro de conexão com o servidor de dados", icon="❌")
+            st.toast("Erro de conexão com o servidor de dados", icon=None)
             return None
             
         r.raise_for_status()
@@ -61,7 +61,7 @@ def post(endpoint: str, json_data: dict | None = None):
 # ─── Header ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="iaudit-header">
-<h1 style="color: #60a5fa; margin: 0; font-size: 1.8rem;">🔍 Detalhes da Empresa</h1>
+<h1 style="color: #60a5fa; margin: 0; font-size: 1.8rem;">Detalhes da Empresa</h1>
 <p style="color: #94a3b8; margin: 0.3rem 0 0 0;">Histórico e configuração individualizada</p>
 </div>
 """, unsafe_allow_html=True)
@@ -93,8 +93,8 @@ if pre_selected:
             break
 
 # Add a "Back" button for better UX
-if st.button("⬅️ Voltar para Lista"):
-    st.switch_page("pages/2_🏢_Empresas.py")
+if st.button("Voltar para Lista"):
+    st.switch_page("pages/2_Empresas.py")
 
 selected = st.selectbox(
     "Selecione a Empresa",
@@ -123,7 +123,7 @@ if not empresa:
 
 
 # ─── Tabs ────────────────────────────────────────────────────────────
-tab_resumo, tab_historico, tab_config = st.tabs(["📊 Resumo", "📜 Histórico", "⚙️ Configuração"])
+tab_resumo, tab_historico, tab_config = st.tabs(["Resumo", "Histórico", "Configuração"])
 
 # ─── Tab: Resumo ─────────────────────────────────────────────────────
 with tab_resumo:
@@ -144,7 +144,7 @@ with tab_resumo:
 {row('IE PR', empresa.get('inscricao_estadual_pr', '-') or '-')}
 {row('Email', empresa.get('email_notificacao', '-') or '-')}
 {row('WhatsApp', empresa.get('whatsapp', '-') or '-')}
-{row('Status', '✅ Ativa' if empresa.get('ativo') else '❌ Inativa')}
+{row('Status', 'Ativa' if empresa.get('ativo') else 'Inativa')}
 </table>
 """, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -178,7 +178,7 @@ with tab_resumo:
 
     # Latest results
     st.markdown("---")
-    st.markdown("#### 🏷️ Últimos Resultados")
+    st.markdown("#### Últimos Resultados")
     
     col_results = st.columns(3)
     
@@ -194,6 +194,11 @@ with tab_resumo:
             st.markdown('<div class="kpi-card" style="min-height: 180px;">', unsafe_allow_html=True)
             st.markdown(f"<h3 style='margin-top:0;'>{label}</h3>", unsafe_allow_html=True)
             
+            # Initialize variables to avoid NameError if no results
+            c = {}
+            situacao = ""
+            status = ""
+
             if consultas:
                 c = consultas[0]
                 situacao = c.get("situacao", "")
@@ -206,32 +211,32 @@ with tab_resumo:
             import os
             
             if tipo == "fgts_regularidade":
-                if st.button("🤖 Automação Caixa", key=f"btn_bot_caixa_{tipo}", help="Abre o navegador oficial para baixar a certidão original"):
+                if st.button("Automação Caixa", key=f"btn_bot_caixa_{tipo}", help="Abre o navegador oficial para baixar a certidão original"):
                     with st.spinner("Iniciando Caixa Bot..."):
                         script_path = os.path.join("frontend", "utils", "run_bot.py")
                         subprocess.Popen([sys.executable, script_path, empresa.get("cnpj", "")])
-                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da Caixa.", icon="🚀")
+                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da Caixa.", icon=None)
             
             elif tipo == "cnd_federal":
-                if st.button("🤖 Automação Federal", key=f"btn_bot_fed_{tipo}", help="Abre o navegador da Receita Federal para emitir a CND original"):
+                if st.button("Automação Federal", key=f"btn_bot_fed_{tipo}", help="Abre o navegador da Receita Federal para emitir a CND original"):
                     with st.spinner("Iniciando Federal Bot..."):
                         script_path = os.path.join("frontend", "utils", "run_bot_federal.py")
                         subprocess.Popen([sys.executable, script_path, empresa.get("cnpj", "")])
-                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da Receita.", icon="🚀")
+                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da Receita.", icon=None)
 
             elif tipo == "cnd_pr":
-                if st.button("🤖 Automação Estadual", key=f"btn_bot_pr_{tipo}", help="Abre o navegador da SEFAZ PR para emitir a CND original"):
+                if st.button("Automação Estadual", key=f"btn_bot_pr_{tipo}", help="Abre o navegador da SEFAZ PR para emitir a CND original"):
                     with st.spinner("Iniciando SEFAZ PR Bot..."):
                         script_path = os.path.join("frontend", "utils", "run_bot_pr.py")
                         subprocess.Popen([sys.executable, script_path, empresa.get("cnpj", "")])
-                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da SEFAZ.", icon="🚀")
+                        st.toast("Navegador aberto! Resolva o CAPTCHA no site da SEFAZ.", icon=None)
                 
                 # Replica Download Button
                 from utils.caixa_crf import generate_caixa_crf
                 try:
                     pdf_crf = generate_caixa_crf(empresa)
                     st.download_button(
-                        label="📄 Baixar CRF (Modelo Caixa)",
+                        label="Baixar CRF (Modelo Caixa)",
                         data=pdf_crf,
                         file_name=f"CRF_{empresa.get('cnpj')}.pdf",
                         mime="application/pdf",
@@ -251,20 +256,20 @@ with tab_resumo:
                 
                 data_exec = str(c.get("data_execucao", ""))
                 data_disp = data_exec[0:10] if len(data_exec) >= 10 else "—"
-                st.markdown(f"<p style='color: #cbd5e1; font-size: 0.9rem;'>📅 {data_disp if data_exec else 'Pendente'}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='color: #cbd5e1; font-size: 0.9rem;'> {data_disp if data_exec else 'Pendente'}</p>", unsafe_allow_html=True)
                 
                 pdf = c.get("pdf_url")
                 if pdf:
-                    st.markdown(f"<a href='{pdf}' target='_blank' style='color: #60a5fa; text-decoration: none;'>📄 Download PDF</a>", unsafe_allow_html=True)
+                    st.markdown(f"<a href='{pdf}' target='_blank' style='color: #60a5fa; text-decoration: none;'>Download PDF</a>", unsafe_allow_html=True)
             else:
-                 st.markdown("<p style='color: #94a3b8;'>⚪ Sem dados</p>", unsafe_allow_html=True)
+                 st.markdown("<p style='color: #94a3b8;'>Sem dados</p>", unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
         idx += 1
 
     # Force query button
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🔄 Forçar Nova Consulta Agora", key="force_detail", type="primary"):
+    if st.button("Forçar Nova Consulta Agora", key="force_detail", type="primary"):
         result = post(f"/api/empresas/{empresa_id}/force-query", {
             "tipos": ["cnd_federal", "cnd_pr"]
         })
@@ -274,7 +279,7 @@ with tab_resumo:
 
 # ─── Tab: Histórico ──────────────────────────────────────────────────
 with tab_historico:
-    st.markdown("#### 📜 Histórico de Consultas")
+    st.markdown("#### Histórico de Consultas")
 
     col_f1, col_f2 = st.columns(2)
     with col_f1:
@@ -307,17 +312,17 @@ with tab_historico:
             "fgts_regularidade": "FGTS",
         }
         status_emojis = {
-            "agendada": "🔵 Agendada",
-            "processando": "🟡 Processando",
-            "concluida": "🟢 Concluída",
-            "erro": "🔴 Erro",
+            "agendada": "Agendada",
+            "processando": "Processando",
+            "concluida": "Concluída",
+            "erro": "Erro",
         }
         situacao_emojis = {
-            "positiva": "🟢 Positiva",
-            "negativa": "🔴 Negativa",
-            "regular": "🟢 Regular",
-            "irregular": "🔴 Irregular",
-            "erro": "🟠 Erro",
+            "positiva": "Positiva",
+            "negativa": "Negativa",
+            "regular": "Regular",
+            "irregular": "Irregular",
+            "erro": "Erro",
         }
 
         df["Tipo"] = df["tipo"].map(tipo_labels).fillna(df["tipo"])
@@ -333,7 +338,7 @@ with tab_historico:
         # PDF download links
         pdfs = df[df["pdf_url"].notna() & (df["pdf_url"] != "")]
         if not pdfs.empty:
-            st.markdown("#### 📄 PDFs Disponíveis")
+            st.markdown("#### PDFs Disponíveis")
             for _, row in pdfs.iterrows():
                 st.markdown(
                     f"- [{row['Tipo']} — {row['Executada']}]({row['pdf_url']})"
@@ -343,7 +348,7 @@ with tab_historico:
 
 # ─── Tab: Configuração ───────────────────────────────────────────────
 with tab_config:
-    st.markdown("#### ⚙️ Editar Configuração")
+    st.markdown("#### Editar Configuração")
 
     with st.form("edit_config"):
         c1, c2 = st.columns(2)
@@ -374,7 +379,7 @@ with tab_config:
             )
             new_ativo = st.checkbox("Ativo", value=empresa.get("ativo", True))
 
-        if st.form_submit_button("💾 Salvar Alterações"):
+        if st.form_submit_button("Salvar Alterações"):
             update_data = {
                 "email_notificacao": new_email or None,
                 "whatsapp": new_whatsapp or None,
@@ -385,5 +390,5 @@ with tab_config:
             }
             result = put(f"/api/empresas/{empresa_id}", update_data)
             if result:
-                st.success("✅ Configuração atualizada com sucesso!")
+                st.success("Configuração atualizada com sucesso!")
                 st.rerun()

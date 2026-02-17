@@ -48,7 +48,7 @@ def fetch_company_data_independent(cnpj: str):
 def process_bulk_list(cnpjs: list, progress_bar=None):
     """
     Processes a list of CNPJs sequentially.
-    Updates session state 'bulk_results' and 'red_flags'.
+    Sends data to Backend API to ensure persistence.
     """
     if 'bulk_results' not in st.session_state:
         st.session_state['bulk_results'] = []
@@ -57,41 +57,71 @@ def process_bulk_list(cnpjs: list, progress_bar=None):
     
     for i, raw_cnpj in enumerate(cnpjs):
         cnpj = clean_cnpj(raw_cnpj)
+        
+        # Update Progress
+        if progress_bar:
+            progress_bar.progress((i + 1) / total, text=f"Processando {i+1}/{total}: {cnpj}")
+
         if len(cnpj) != 14:
-            # Skip valid length check or mark as invalid
             st.session_state['bulk_results'].append({
                 "cnpj": raw_cnpj,
                 "razao_social": "CNPJ Inválido",
                 "situacao": "ERRO",
-                "status_icon": "❌"
+                "status_icon": "Erro"
             })
             continue
             
-        # Fetch Data
-        data = fetch_company_data_independent(cnpj)
-        
-        # Process Result
-        # Determine status icon/class similar to main app but independent
-        situacao = data.get('situacao', 'DESCONHECIDA')
-        is_regular = situacao.upper() == 'ATIVA' or situacao.upper() == 'REGULAR' # Adapting to likely API response
-        
+        # Register Company in Backend
+        try:
+            # 1. Try to fetch existing data to check if already exists
+            # For bulk import, we often just want to register them.
+            # Let's try to CREATE it. If it exists, the backend handles it or we update it.
+            # But the requirement is "add companies".
+            
+            # Payload for creation
+            payload = {
+                "cnpj": cnpj,
+                "razao_social": f"Empresa {cnpj[:8]}...", # Temporary placeholder if not enriched
+                "periodicidade": "mensal",
+                "horario": "08:00:00",
+                "ativo": True
+            }
+            
+            # Smart enrichment attempt (Simulated for now, or use an enrichment endpoint if available)
+            # If we had a real enrichment service, we'd call it here.
+            # For now, we post to /api/empresas which validates and stores.
+            
+            response = httpx.post(f"{BACKEND_URL}/api/empresas", json=payload, timeout=10.0)
+            
+            if response.status_code == 201 or response.status_code == 200:
+                data = response.json()
+                situacao = "Regular" # Default for new companies until validated
+                status_icon = "Regular"
+                razao = data.get("razao_social", payload["razao_social"])
+            elif response.status_code == 409:
+                # Already exists
+                situacao = "Já Cadastrada"
+                status_icon = "Regular"
+                razao = "Empresa Existente"
+            else:
+                situacao = "Erro ao Cadastrar"
+                status_icon = "Erro"
+                razao = "Erro API"
+
+        except Exception as e:
+            situacao = f"Erro de Conexão: {str(e)}"
+            status_icon = "Erro"
+            razao = "Erro"
+
         result_entry = {
             "cnpj": cnpj,
-            "razao_social": data.get('razao_social', 'Desconhecido'),
+            "razao_social": razao,
             "situacao": situacao,
-            "status_icon": "✅" if is_regular else "🚩",
+            "status_icon": status_icon,
             "data_consulta": datetime.now().strftime("%Y-%m-%d %H:%M")
         }
         
-        st.session_state['bulk_results'].insert(0, result_entry) # Add to top
-        
-        # INTEGRATION WITH RED FLAG MODULE
-        if not is_regular:
-            add_to_red_flags(result_entry)
-            
-        # Update Progress
-        if progress_bar:
-            progress_bar.progress((i + 1) / total, text=f"Processando {i+1}/{total}: {cnpj}")
+        st.session_state['bulk_results'].insert(0, result_entry)
 
 # ─── MODULE 2: RED FLAG MANAGER ──────────────────────────────────────
 

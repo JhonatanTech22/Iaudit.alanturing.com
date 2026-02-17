@@ -23,7 +23,7 @@ def run_robot(bot_name: str, cnpj: str):
         # Run detached if on Windows to allow app to continue
         subprocess.Popen([sys.executable, script_path, cnpj], 
                          creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0)
-        st.toast(f"🤖 Robô {bot_name} iniciado para o CNPJ {cnpj}...", icon="🤖")
+        st.toast(f"Robô {bot_name} iniciado para o CNPJ {cnpj}...", icon=None)
     except Exception as e:
         st.error(f"Erro ao disparar robô: {e}")
 
@@ -35,7 +35,7 @@ from utils.ui import setup_page
 import streamlit.components.v1 as components
 
 # Configure page & load global CSS
-setup_page(title="IAudit — Empresas", icon="🏢")
+setup_page(title="IAudit — Empresas", icon=None)
 
 def fmt_cnpj(cnpj: str) -> str:
     """Format CNPJ string to 00.000.000/0000-00."""
@@ -85,15 +85,15 @@ def fetch(endpoint: str, params: dict | None = None, timeout: int = 90, retries:
             r = httpx.get(f"{BACKEND_URL}{endpoint}", params=params, timeout=timeout)
             
             if r.status_code == 404:
-                st.toast("🔍 Empresa não localizada nos registros oficiais.", icon="🔍")
+                st.toast("Empresa não localizada nos registros oficiais.", icon=None)
                 return None
             elif r.status_code >= 500:
                 if attempt < retries:
-                    st.toast(f"🔄 Conexão instável, tentando novamente ({attempt + 1}/{retries})...", icon="⏳")
+                    st.toast(f"Conexão instável, tentando novamente ({attempt + 1}/{retries})...", icon=None)
                     import time
                     time.sleep(1)
                     continue
-                st.toast("🚨 O serviço oficial está indisponível. Tente em instantes.", icon="❌")
+                st.toast("O serviço oficial está indisponível. Tente em instantes.", icon=None)
                 return None
                 
             r.raise_for_status()
@@ -101,22 +101,22 @@ def fetch(endpoint: str, params: dict | None = None, timeout: int = 90, retries:
             
         except (httpx.TimeoutException, httpx.ConnectError):
             if attempt < retries:
-                st.toast(f"⏳ Conexão lenta, tentando novamente ({attempt + 1}/{retries})...", icon="🌐")
+                st.toast(f"Conexão lenta, tentando novamente ({attempt + 1}/{retries})...", icon=None)
                 import time
                 time.sleep(2)
                 continue
-            st.error("⏱️ Tempo limite esgotado. Verifique sua conexão.")
+            st.error("Tempo limite esgotado. Verifique sua conexão.")
             return None
         except Exception as e:
             if "/cnpj/" in endpoint: 
-                st.error(f"❌ Erro na consulta (Backend): {str(e)}")
+                st.error(f"Erro na consulta (Backend): {str(e)}")
                 return None
             elif "/api/empresas" in endpoint:
                 from components.mock_data import get_mock_companies
                 if "mock_companies" not in st.session_state:
                     st.session_state.mock_companies = get_mock_companies(150)
                 return st.session_state.mock_companies
-            st.error(f"❌ Erro inesperado: {str(e)}")
+            st.error(f"Erro inesperado: {str(e)}")
             return None
     return None
 
@@ -167,24 +167,21 @@ def delete(endpoint: str):
 
 # ─── Sidebar History ─────────────────────────────────────────────────
 with st.sidebar:
-    st.header("🕒 Histórico Recente")
+    st.header("Histórico Recente")
     if not st.session_state['search_history']:
         st.info("Nenhuma busca recente.")
     else:
         for item in st.session_state['search_history']:
             with st.container():
-                col_h1, col_h2 = st.columns([0.8, 0.2])
-                with col_h1:
-                    st.markdown(f"**{item['razao_social']}**")
-                    st.caption(f"CNPJ: {item['cnpj']} • {item['timestamp']}")
-                with col_h2:
-                    if st.button("🔄", key=f"hist_{item['cnpj']}", help="Recarregar esta busca"):
-                        load_from_history(item)
-                        st.rerun()
+                st.write(f"**{item['razao_social']}**")
+                st.caption(f"CNPJ: {item['cnpj']} • {item['timestamp']}")
+                if st.button("📂 Abrir", key=f"hist_{item['cnpj']}", use_container_width=True):
+                    load_from_history(item)
+                    st.rerun()
                 st.markdown("---")
     
-    st.markdown("### ⚙️ Opções")
-    if st.button("🗑️ Limpar Histórico"):
+    st.markdown("### Opções")
+    if st.button("Limpar Histórico"):
         st.session_state['search_history'] = []
         st.rerun()
 
@@ -235,12 +232,12 @@ with col_input:
 with col_button:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
-    buscar_btn = st.button("🔍 Buscar", use_container_width=True, type="primary", on_click=sanitize_cnpj)
+    buscar_btn = st.button("Buscar", use_container_width=True, type="primary", on_click=sanitize_cnpj)
 
 
 if buscar_btn:
     if not cnpj_busca:
-         st.warning("⚠️ Digite um CNPJ para consultar.")
+         st.warning("Digite um CNPJ para consultar.")
     else:
         # Clear previous results
         if 'dados_empresa' in st.session_state:
@@ -278,12 +275,12 @@ if buscar_btn:
                     st.session_state['dados_empresa'] = result_api
                     add_to_history(result_api)
                 else:
-                    st.toast("❌ Empresa não encontrada ou erro na consulta.", icon="❌")
+                    st.toast("Empresa não encontrada ou erro na consulta.", icon=None)
             except Exception as e:
                 loading_placeholder.empty()
-                st.toast(f"❌ Erro ao consultar: {str(e)}", icon="❌")
+                st.toast(f"Erro ao consultar: {str(e)}", icon=None)
         else:
-             st.warning("⚠️ CNPJ inválido. Digite 14 dígitos numéricos.")
+             st.warning("CNPJ inválido. Digite 14 dígitos numéricos.")
 
 # Display results from session state
 if 'dados_empresa' in st.session_state:
@@ -312,7 +309,7 @@ if 'dados_empresa' in st.session_state:
                 pdf_buffer = generate_company_pdf(result)
                 
                 st.download_button(
-                    label="📄 Baixar Relatório PDF (Gerado Localmente)",
+                    label="Baixar Relatório PDF (Gerado Localmente)",
                     data=pdf_buffer,
                     file_name=f"Relatorio_{cnpj_clean}.pdf",
                     mime="application/pdf",
@@ -324,7 +321,7 @@ if 'dados_empresa' in st.session_state:
 
         # Official Links
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("ℹ️ Para emitir as certidões oficiais originais, acesse os portais do governo:")
+        st.info("Para emitir as certidões oficiais originais, acesse os portais do governo:")
         
         col_link1, col_link2, col_link3 = st.columns(3)
         
@@ -332,7 +329,7 @@ if 'dados_empresa' in st.session_state:
             st.markdown("""
 <a href="https://solucoes.receita.fazenda.gov.br/Servicos/certidaointernet/PJ/Emitir" target="_blank">
 <button style="width:100%; padding:0.5rem; background:#334155; color:white; border:none; border-radius:4px; cursor:pointer;">
-🏛️ Receita Federal
+Receita Federal
 </button>
 </a>
 """, unsafe_allow_html=True)
@@ -341,7 +338,7 @@ if 'dados_empresa' in st.session_state:
             st.markdown("""
 <a href="https://cdwfazenda.paas.pr.gov.br/cdwportal/certidao/automatica" target="_blank">
 <button style="width:100%; padding:0.5rem; background:#334155; color:white; border:none; border-radius:4px; cursor:pointer;">
-🏛️ SEFAZ/PR
+SEFAZ/PR
 </button>
 </a>
 """, unsafe_allow_html=True)
@@ -350,7 +347,7 @@ if 'dados_empresa' in st.session_state:
             st.markdown("""
 <a href="https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf" target="_blank">
 <button style="width:100%; padding:0.5rem; background:#334155; color:white; border:none; border-radius:4px; cursor:pointer;">
-🏛️ Caixa / FGTS
+Caixa / FGTS
 </button>
 </a>
 """, unsafe_allow_html=True)
@@ -358,7 +355,7 @@ if 'dados_empresa' in st.session_state:
         st.markdown("---")
         
         # ─── Certificate Status Cards & Auto-Open Logic ──────────────────
-        st.markdown("🔍 **Status dos Certificados**")
+        st.markdown("**Status dos Certificados**")
         
         cert_types = [
             ("cnd_federal", "Certidão Federal"),
@@ -399,13 +396,13 @@ if 'dados_empresa' in st.session_state:
                     <div style="text-align: center; margin-bottom: 2rem;">
                         <a href="{site_receipt}" target="_blank" style="text-decoration: none;">
                             <button style="background: #3b82f6; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
-                                🔗 O Download do seu Certificado {label} está pronto: Clique Aqui
+                                O Download do seu Certificado {label} está pronto: Clique Aqui
                             </button>
                         </a>
                     </div>
                     """, unsafe_allow_html=True)
                 elif situacao != "REGULAR":
-                    st.warning(f"⚠️ {label} pendente ou indisponível. Verifique os dados acima.")
+                    st.warning(f"{label} pendente ou indisponível. Verifique os dados acima.")
 
         st.markdown("---")
         
@@ -494,7 +491,7 @@ if 'dados_empresa' in st.session_state:
         # ENDEREÇO
         # ══════════════════════════════════════════════════════════════
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 📍 Endereço")
+        st.markdown("### Endereço")
         
         tipo_log = result.get('descricao_tipo_de_logradouro', '')
         logr = result.get('logradouro', '')
@@ -538,7 +535,7 @@ if 'dados_empresa' in st.session_state:
         # RESUMO VISUAL DA EMPRESA (Gráficos)
         # ══════════════════════════════════════════════════════════════
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 📊 Resumo Visual da Empresa")
+        st.markdown("### Resumo Visual da Empresa")
         
         import plotly.graph_objects as go
         
@@ -631,7 +628,7 @@ if 'dados_empresa' in st.session_state:
         # ══════════════════════════════════════════════════════════════
         # ATIVIDADE ECONÔMICA (CNAE) - Tabela
         # ══════════════════════════════════════════════════════════════
-        st.markdown("### 🏭 Atividades Econômicas (CNAE)")
+        st.markdown("### Atividades Econômicas (CNAE)")
         
         def fmt_cnae_code(code):
             """Format CNAE code: 9313100 -> 93.13-1/00"""
@@ -644,14 +641,14 @@ if 'dados_empresa' in st.session_state:
         cnae_desc_principal = result.get('cnae_fiscal_descricao', '')
         if cnae_principal:
             cnae_data.append({
-                'Tipo': '🔵 Principal',
+                'Tipo': 'Principal',
                 'Código': fmt_cnae_code(cnae_principal),
                 'Descrição': cnae_desc_principal,
             })
         
         for cnae_sec in result.get('cnaes_secundarios', []):
             cnae_data.append({
-                'Tipo': '⚪ Secundária',
+                'Tipo': 'Secundária',
                 'Código': fmt_cnae_code(cnae_sec.get('codigo', '')),
                 'Descrição': cnae_sec.get('descricao', ''),
             })
@@ -676,7 +673,7 @@ if 'dados_empresa' in st.session_state:
         # ══════════════════════════════════════════════════════════════
         qsa = result.get('qsa', [])
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 👥 Quadro de Sócios e Administradores")
+        st.markdown("### Quadro de Sócios e Administradores")
         
         if qsa:
             qsa_col1, qsa_col2 = st.columns([2, 1])
@@ -729,13 +726,13 @@ if 'dados_empresa' in st.session_state:
                 )
                 st.plotly_chart(fig_qsa, use_container_width=True)
         else:
-            st.info("📭 Nenhum sócio encontrado para este CNPJ.")
+            st.info("Nenhum sócio encontrado para este CNPJ.")
 
         # ══════════════════════════════════════════════════════════════
         # INFORMAÇÕES FISCAIS
         # ══════════════════════════════════════════════════════════════
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 💰 Informações Fiscais e Tributárias")
+        st.markdown("### Informações Fiscais e Tributárias")
         
         fiscal_col1, fiscal_col2 = st.columns([1, 1])
         
@@ -745,8 +742,8 @@ if 'dados_empresa' in st.session_state:
             mei = result.get('opcao_pelo_mei')
             capital = result.get('capital_social', 0)
             
-            simples_icon = "✅" if simples else "❌" if simples == False else "—"
-            mei_icon = "✅" if mei else "❌" if mei == False else "—"
+            simples_icon = "Sim" if simples else "Não" if simples == False else "—"
+            mei_icon = "Sim" if mei else "Não" if mei == False else "—"
             simples_text = "Sim" if simples else "Não" if simples == False else "Não informado"
             mei_text = "Sim" if mei else "Não" if mei == False else "Não informado"
             simples_cor = "#4ade80" if simples else "#f87171" if simples == False else "#94a3b8"
@@ -755,7 +752,7 @@ if 'dados_empresa' in st.session_state:
             st.markdown(f"""
             <table class="iaudit-table">
                 <tr>
-                    <th colspan='2' style='text-align: left; font-size: 0.9rem;'>📋 Regime Tributário</th>
+                    <th colspan='2' style='text-align: left; font-size: 0.9rem;'>Regime Tributário</th>
                 </tr>
                 <tr>
                     <td class="label" style='width: 50%;'>Simples Nacional</td>
@@ -810,13 +807,13 @@ if 'dados_empresa' in st.session_state:
             else:
                 st.markdown("""
                 <div style='background: #1e293b; padding: 1.5rem; border-radius: 8px; border: 1px solid #334155; text-align: center;'>
-                    <p style='color: #94a3b8; margin: 0;'>📊 Histórico de regime tributário não disponível</p>
+                    <p style='color: #94a3b8; margin: 0;'>Histórico de regime tributário não disponível</p>
                 </div>
                 """, unsafe_allow_html=True)
             
         # Certifications
         st.markdown("---")
-        st.markdown("### 📜 Certidões e Regularidade")
+        st.markdown("### Certidões e Regularidade")
         
         cert = result.get('certidoes', {})
         
@@ -825,20 +822,20 @@ if 'dados_empresa' in st.session_state:
         # Helper for status colors
         def get_status_info(status):
             if status == 'regular':
-                return '#065f46', '✅', 'REGULAR', '#34d399'
+                return '#065f46', '', 'REGULAR', '#34d399'
             elif status == 'irregular':
-                return '#7f1d1d', '❌', 'IRREGULAR', '#f87171'
+                return '#7f1d1d', '', 'IRREGULAR', '#f87171'
             elif status == 'consultando':
-                return '#1e40af', '🔄', 'CONSULTANDO', '#60a5fa'
+                return '#1e40af', '', 'CONSULTANDO', '#60a5fa'
             else:
-                return '#1e293b', '⚠️', 'INDISPONÍVEL', '#94a3b8'
+                return '#1e293b', '', 'INDISPONÍVEL', '#94a3b8'
         
         # Helper to render certificate download button
         def cert_download_btn(cert_url, label):
             if cert_url:
                 return f"""
                 <a href='{cert_url}' target='_blank' style='display: inline-block; margin-top: 0.7rem; padding: 0.4rem 1rem; background: #1e40af; color: white; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;'>
-                    📥 {label}
+                    {label}
                 </a>
                 """
             return ""
@@ -851,7 +848,7 @@ if 'dados_empresa' in st.session_state:
             
             link_html = ""
             if cert_url:
-                link_html = f"<a href='{cert_url}' target='_blank' style='display: block; margin-top: 0.8rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 700; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s;'>🔗 Acessar Certidão</a>"
+                link_html = f"<a href='{cert_url}' target='_blank' style='display: block; margin-top: 0.8rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border-radius: 8px; text-decoration: none; font-size: 0.8rem; font-weight: 700; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s;'>Acessar Certidão</a>"
             else:
                 link_html = ""
             
@@ -867,7 +864,7 @@ if 'dados_empresa' in st.session_state:
             import sys
             import os
             
-            btn_label = "🤖 Automação Federal" if "Federal" in title else "🤖 Automação Estadual" if "Estadual" in title else "🤖 Automação Caixa"
+            btn_label = "Automação Federal" if "Federal" in title else "Automação Estadual" if "Estadual" in title else "Automação Caixa"
             help_text = "Abre o site oficial para emissão da certidão original"
             script_name = "run_bot_federal.py" if "Federal" in title else "run_bot_pr.py" if "Estadual" in title else "run_bot.py"
             
@@ -875,7 +872,7 @@ if 'dados_empresa' in st.session_state:
                 with st.spinner(f"Iniciando {btn_label}..."):
                     script_path = os.path.join("frontend", "utils", script_name)
                     subprocess.Popen([sys.executable, script_path, result.get("cnpj", "")])
-                    st.toast(f"Navegador aberto! Resolva o CAPTCHA no site oficial.", icon="🚀")
+                    st.toast(f"Navegador aberto! Resolva o CAPTCHA no site oficial.", icon=None)
         
         # CND Federal
         with c1:
@@ -902,12 +899,12 @@ if 'dados_empresa' in st.session_state:
         
         if cert_links:
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("#### 🔗 Links Diretos das Certidões")
+            st.markdown("#### Links Diretos das Certidões")
             
             links_rows = ""
             for nome, url, c_status in cert_links:
                 status_text, cor = ("REGULAR", "#4ade80") if c_status == 'regular' else ("IRREGULAR", "#f87171") if c_status == 'irregular' else ("VERIFICAR", "#94a3b8")
-                links_rows += f"<tr><td style='padding: 10px 15px; color: #f1f5f9; font-weight: 500; border-bottom: 1px solid #334155;'>{nome}</td><td style='padding: 10px 15px; color: {cor}; font-weight: 700; border-bottom: 1px solid #334155;'>{status_text}</td><td style='padding: 10px 15px; border-bottom: 1px solid #334155;'><a href='{url}' target='_blank' style='color: #60a5fa; text-decoration: none; font-weight: 600;'>📄 Abrir Certidão →</a></td></tr>"
+                links_rows += f"<tr><td style='padding: 10px 15px; color: #f1f5f9; font-weight: 500; border-bottom: 1px solid #334155;'>{nome}</td><td style='padding: 10px 15px; color: {cor}; font-weight: 700; border-bottom: 1px solid #334155;'>{status_text}</td><td style='padding: 10px 15px; border-bottom: 1px solid #334155;'><a href='{url}' target='_blank' style='color: #60a5fa; text-decoration: none; font-weight: 600;'>Abrir Certidão →</a></td></tr>"
 
             st.markdown(f"""<table class="iaudit-table">
 <tr>
@@ -920,11 +917,11 @@ if 'dados_empresa' in st.session_state:
         
         # ─── Gerador de Certificado (Novo) ───
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 📄 Gerar Certificado Digital")
+        st.markdown("### Gerar Certificado Digital")
         
         col_gen1, col_gen2 = st.columns([1, 2])
         with col_gen1:
-            if st.button("🖨️ Gerar Certificado FGTS", type="primary", use_container_width=True):
+            if st.button("Gerar Certificado FGTS", type="primary", use_container_width=True):
                 # Generate HTML
                 cert_html = generate_fgts_certificate(result)
                 
@@ -936,12 +933,12 @@ if 'dados_empresa' in st.session_state:
                 st.rerun()
 
         if 'generated_certificate' in st.session_state:
-            with st.expander("👁️ Visualizar Certificado Gerado", expanded=True):
+            with st.expander("Visualizar Certificado Gerado", expanded=True):
                 st.components.v1.html(st.session_state['generated_certificate'], height=600, scrolling=True)
                 
                 # Download button
                 st.download_button(
-                    label="📥 Baixar HTML",
+                    label="Baixar HTML",
                     data=st.session_state['generated_certificate'],
                     file_name=f"Certificado_FGTS_{result.get('cnpj', 'empresa')}.html",
                     mime="text/html"
@@ -955,40 +952,40 @@ if 'dados_empresa' in st.session_state:
         # CERTIFICADO DE CONFORMIDADE - Download
         # ══════════════════════════════════════════════════════════════
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 📄 Certificado de Conformidade")
+        st.markdown("### Certificado de Conformidade")
         
         cert_col1, cert_col2 = st.columns([3, 1])
         with cert_col1:
             st.markdown("""
             <div style='background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 1.2rem 1.5rem; border-radius: 12px; border: 1px solid #60a5fa;'>
-                <p style='color: white; margin: 0 0 0.3rem 0; font-weight: 700; font-size: 1.05rem;'>📋 Gerar Certificado de Conformidade</p>
+                <p style='color: white; margin: 0 0 0.3rem 0; font-weight: 700; font-size: 1.05rem;'>Gerar Certificado de Conformidade</p>
                 <p style='color: #bfdbfe; margin: 0; font-size: 0.85rem;'>Relatório completo em PDF com dados cadastrais, sócios, atividades econômicas, certidões de regularidade e análise de conformidade com score de 0 a 100.</p>
             </div>
             """, unsafe_allow_html=True)
         
         with cert_col2:
             cnpj_for_pdf = result.get('cnpj', '').replace('.', '').replace('/', '').replace('-', '')
-            if st.button("📥 Baixar Certificado PDF", key="btn_certificado", use_container_width=True, type="primary"):
+            if st.button("Baixar Certificado PDF", key="btn_certificado", use_container_width=True, type="primary"):
                 with st.spinner("Gerando certificado..."):
                     try:
                         r = httpx.get(f"{BACKEND_URL}/api/pdf/cnpj/{cnpj_for_pdf}", timeout=90)
                         r.raise_for_status()
                         st.download_button(
-                            label="⬇️ Clique para salvar o PDF",
+                            label="Clique para salvar o PDF",
                             data=r.content,
                             file_name=f"certificado_conformidade_{cnpj_for_pdf}.pdf",
                             mime="application/pdf",
                             key="download_cert_pdf",
                             use_container_width=True,
                         )
-                        st.success("✅ Certificado gerado com sucesso!")
+                        st.success("Certificado gerado com sucesso!")
                     except Exception as e:
-                        st.error(f"❌ Erro ao gerar certificado: {e}")
+                        st.error(f"Erro ao gerar certificado: {e}")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Full JSON
-        with st.expander("📄 Ver dados completos (JSON)"):
+        with st.expander("Ver dados completos (JSON)"):
             st.json(result)
         
         if result.get('message'):
@@ -997,20 +994,20 @@ if 'dados_empresa' in st.session_state:
 st.markdown("---")
 
 # ─── Filters ─────────────────────────────────────────────────────────
-st.markdown("### 📋 Empresas Cadastradas")
+st.markdown("### Empresas Cadastradas")
 col_f1, col_f2, col_f3 = st.columns([2, 1, 1])
 with col_f1:
-    search = st.text_input("🔍 Buscar por CNPJ ou Razão Social", key="search")
+    search = st.text_input("Buscar por CNPJ ou Razão Social", key="search")
 with col_f2:
     status_filter = st.selectbox("Status", ["Todas", "Ativas", "Inativas"])
 with col_f3:
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("➕ Nova Empresa"):
+    if st.button("Nova Empresa"):
         st.session_state.show_add_form = True
 
 # ─── Add Empresa Form ────────────────────────────────────────────────
 if st.session_state.get("show_add_form"):
-    with st.expander("➕ Cadastrar Nova Empresa", expanded=True):
+    with st.expander("Cadastrar Nova Empresa", expanded=True):
         with st.form("add_empresa"):
             c1, c2 = st.columns(2)
             with c1:
@@ -1044,7 +1041,7 @@ if st.session_state.get("show_add_form"):
                     dia_semana_cad = None
                     dia_mes_cad = None
 
-            submitted = st.form_submit_button("💾 Salvar")
+            submitted = st.form_submit_button("Salvar")
             if submitted:
                 if not cnpj_cad or not razao_cad:
                     st.error("Preencha os campos obrigatórios (*) - CNPJ e Razão Social")
@@ -1064,7 +1061,7 @@ if st.session_state.get("show_add_form"):
                     with st.spinner("Salvando empresa..."):
                         result_save = post("/api/empresas", data)
                         if result_save:
-                            st.success(f"✅ Empresa {razao_cad} cadastrada com sucesso!")
+                            st.success(f"Empresa {razao_cad} cadastrada com sucesso!")
                             st.session_state.show_add_form = False
                             st.rerun()
 
@@ -1093,7 +1090,7 @@ if empresas:
     
     # Add status column placeholder if not exists
     if "_status_emoji" not in df.columns:
-        df["_status_emoji"] = "⚪ Pendente"
+        df["_status_emoji"] = "Pendente"
 
     # Minimal display columns
     display_cols = {
@@ -1111,12 +1108,12 @@ if empresas:
     
     df_display = df[cols_to_use].rename(columns=display_cols)
     if "ativo" in df.columns:
-        df_display["Ativo"] = df_display["Ativo"].map({True: "✅", False: "❌"})
+        df_display["Ativo"] = df_display["Ativo"].map({True: "Sim", False: "Não"})
 
     st.dataframe(df_display, use_container_width=True, hide_index=True)
 
     # ─── Actions per empresa ─────────────────────────────────────────
-    st.markdown("### ⚡ Ações")
+    st.markdown("### Ações")
     selected_empresa = st.selectbox(
         "Selecione uma empresa para ações",
         options=[(e["id"], f"{e['razao_social']} ({e['cnpj']})") for e in empresas],
@@ -1128,7 +1125,7 @@ if empresas:
         col_a1, col_a2, col_a3, col_a4 = st.columns(4)
 
         with col_a1:
-            if st.button("🔄 Forçar Consulta"):
+            if st.button("Forçar Consulta"):
                 with st.spinner("Agendando consulta..."):
                     result_force = post(f"/api/empresas/{emp_id}/force-query", {
                         "tipos": ["cnd_federal", "cnd_pr"]
@@ -1140,19 +1137,19 @@ if empresas:
         with col_a2:
             emp_data = next((e for e in empresas if e["id"] == emp_id), None)
             is_active = emp_data.get("ativo", True) if emp_data else True
-            label = "⏸️ Pausar" if is_active else "▶️ Ativar"
+            label = "Pausar" if is_active else "Ativar"
             if st.button(label):
                 with st.spinner("Atualizando status..."):
                     put(f"/api/empresas/{emp_id}", {"ativo": not is_active})
                     st.rerun()
 
         with col_a3:
-            if st.button("🔍 Ver Detalhes"):
+            if st.button("Ver Detalhes"):
                 st.session_state.detail_empresa_id = emp_id
                 st.switch_page("pages/4_🔍_Detalhes.py")
 
         with col_a4:
-            if st.button("🗑️ Remover", type="primary"):
+            if st.button("Remover", type="primary"):
                 if delete(f"/api/empresas/{emp_id}"):
                     st.success("Empresa removida.")
                     st.rerun()

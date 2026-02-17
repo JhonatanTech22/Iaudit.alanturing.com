@@ -141,7 +141,7 @@ def progress_ring(percentage, label="", size=120):
     """, unsafe_allow_html=True)
 
 
-def data_card(title, value, icon="📊", trend=None):
+def data_card(title, value, icon=None, trend=None):
     """Display animated data card with optional trend."""
     trend_html = ""
     if trend:
@@ -205,7 +205,7 @@ def data_card(title, value, icon="📊", trend=None):
     """, unsafe_allow_html=True)
 
 
-def export_button(data, filename="data.json", label="📥 Exportar Dados"):
+def export_button(data, filename="data.json", label="Exportar Dados"):
     """Create an export button for data."""
     import json
     

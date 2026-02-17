@@ -6,12 +6,12 @@ import utils.new_modules as addons
 from utils.ui import setup_page
 
 # Configure page
-setup_page(title="IAudit — Agendamentos", icon="⏰")
+setup_page(title="IAudit — Agendamentos", icon=None)
 
 # ─── Header ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="iaudit-header">
-<h1>⏰ Automação de Envio</h1>
+<h1>Automação de Envio</h1>
 <p>Agende consultas automáticas e envio de relatórios</p>
 </div>
 """, unsafe_allow_html=True)
@@ -20,29 +20,29 @@ st.markdown("""
 c1, c2 = st.columns([1, 1], gap="large")
 
 with c1:
-    st.markdown("### 📅 Novo Agendamento")
+    st.markdown("### Novo Agendamento")
     
     # ─── QUICK PRESETS ───────────────────────────────────────────────────
     tipo_tarefa = st.radio(
         "O que você deseja agendar?",
-        ["📄 Relatório Geral", "⚠️ Alerta de Risco", "🔄 Renovação Automática", "✏️ Personalizado"],
+        ["Relatório Geral", "Alerta de Risco", "Renovação Automática", "Personalizado"],
         horizontal=True
     )
     
     with st.form("scheduler_form"):
         # Auto-fill based on selection
-        if tipo_tarefa == "📄 Relatório Geral":
+        if tipo_tarefa == "Relatório Geral":
             def_desc = "Relatório Semanal de Conformidade"
-            def_acao = "📧 Enviar Relatório por E-mail"
-        elif tipo_tarefa == "⚠️ Alerta de Risco":
+            def_acao = "Enviar Relatório por E-mail"
+        elif tipo_tarefa == "Alerta de Risco":
             def_desc = "Monitoramento de Irregularidades (Diário)"
-            def_acao = "⚠️ Disparar Alerta de Irregularidade"
-        elif tipo_tarefa == "🔄 Renovação Automática":
+            def_acao = "Disparar Alerta de Irregularidade"
+        elif tipo_tarefa == "Renovação Automática":
             def_desc = "Renovação de CNDs Vencidas"
-            def_acao = "🔄 Renovar Certidões Automaticamente"
+            def_acao = "Renovar Certidões Automaticamente"
         else:
             def_desc = ""
-            def_acao = "📧 Enviar Relatório por E-mail"
+            def_acao = "Enviar Relatório por E-mail"
             
         descricao = st.text_input("Descrição", value=def_desc)
         
@@ -52,24 +52,24 @@ with c1:
         with c_time2:
             hora_envio = st.time_input("Horário", value=datetime.now().time())
             
-        with st.expander("⚙️ Opções Avançadas", expanded=(tipo_tarefa == "✏️ Personalizado")):
+        with st.expander("Opções Avançadas", expanded=(tipo_tarefa == "Personalizado")):
             tipo_acao = st.selectbox(
                 "Ação Executada",
                 [
-                    "📧 Enviar Relatório por E-mail",
-                    "⚠️ Disparar Alerta de Irregularidade",
-                    "🔄 Renovar Certidões Automaticamente"
+                    "Enviar Relatório por E-mail",
+                    "Disparar Alerta de Irregularidade",
+                    "Renovar Certidões Automaticamente"
                 ],
-                index=0 if def_acao == "📧 Enviar Relatório por E-mail" else 1 if def_acao == "⚠️ Disparar Alerta de Irregularidade" else 2
+                index=0 if def_acao == "Enviar Relatório por E-mail" else 1 if def_acao == "Disparar Alerta de Irregularidade" else 2
             )
             destinatarios = st.text_input("Emails (Opcional)", placeholder="seunome@empresa.com")
             repetir = st.checkbox("Repetir semanalmente?", value=True)
         
-        submitted = st.form_submit_button("✅ Confirmar Agendamento", type="primary")
+        submitted = st.form_submit_button("Confirmar Agendamento", type="primary")
         
         if submitted:
             if not descricao:
-                st.warning("⚠️ Digite uma descrição.")
+                st.warning("Digite uma descrição.")
             else:
                 job_data = {
                     "descricao": descricao,
@@ -79,10 +79,10 @@ with c1:
                     "status": "Aguardando"
                 }
                 addons.schedule_job(job_data)
-                st.success("✅ Agendado com sucesso!")
+                st.success("Agendado com sucesso!")
 
 with c2:
-    st.markdown("### ⏳ Próximas Execuções (Cron-Job Sim)")
+    st.markdown("### Próximas Execuções (Cron-Job Sim)")
     
     jobs = addons.get_scheduled_jobs()
     
@@ -93,7 +93,7 @@ with c2:
         <div style="opacity: 0.5;">
             <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
                 <b>Exemplo: Envio Semanal</b><br>
-                <small>📅 20/12/2026 • 08:00</small>
+                <small>20/12/2026 • 08:00</small>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -106,11 +106,11 @@ with c2:
                     <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">{job['status']}</span>
                 </div>
                 <div style="margin-top: 0.5rem; color: #94a3b8; font-size: 0.9rem;">
-                    📅 {job['data']} às {job['hora']}<br>
-                    ⚡ {job['acao']}
+                    {job['data']} às {job['hora']}<br>
+                    {job['acao']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
 st.markdown("---")
-st.caption("ℹ️ O sistema processará as filas automaticamente no horário programado.")
+st.caption("O sistema processará as filas automaticamente no horário programado.")

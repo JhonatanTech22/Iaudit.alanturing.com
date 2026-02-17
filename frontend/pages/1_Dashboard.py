@@ -42,7 +42,7 @@ from utils.ui import setup_page
 
 # ─── SETUP ──────────────────────────────────────────────────────────
 
-setup_page(title="IAudit — Dashboard", icon="📊", layout="wide")
+setup_page(title="IAudit — Dashboard", icon=None, layout="wide")
 
 
 
@@ -53,37 +53,19 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 def fetch(endpoint: str, params: dict | None = None):
 
     try:
-
         r = httpx.get(f"{BACKEND_URL}{endpoint}", params=params, timeout=10)
-
         r.raise_for_status()
-
         return r.json()
-
-    except:
-
-        from components.mock_data import (
-
-            MOCK_DASHBOARD_STATS, MOCK_DASHBOARD_CHART,
-
-            MOCK_DASHBOARD_ALERTS, MOCK_DASHBOARD_UPCOMING
-
-        )
-
-        if "stats" in endpoint: return MOCK_DASHBOARD_STATS
-
-        elif "chart" in endpoint: return MOCK_DASHBOARD_CHART
-
-        elif "alerts" in endpoint: return MOCK_DASHBOARD_ALERTS
-
-        elif "upcoming" in endpoint: return MOCK_DASHBOARD_UPCOMING
-
+    except Exception as e:
+        # Log error but return None so UI handles "No Data" state instead of Fake Data
+        print(f"Fetch error: {e}")
         return None
 
 
 
 # ─── HERO SECTION ───────────────────────────────────────────────────
 
+# ─── SIDEBAR BRANDING ───────────────────────────────────────────────
 # ─── SIDEBAR BRANDING ───────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
@@ -95,6 +77,10 @@ with st.sidebar:
         <div class="brand-name">IAudit</div>
     </div>
     """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    if st.button("🔄 Atualizar Dados", use_container_width=True):
+        st.rerun()
 
 # ─── HERO SECTION (MEGA BRAND) ──────────────────────────────────────
 # ─── 1. REFINED HEADER (BRANDING) ─────────────────────────────────────
@@ -107,7 +93,7 @@ st.markdown("""
         <div style="height: 60px;"></div>
     </div>
     <div style="z-index: 1;">
-        <div class="brand-title-large" style="text-shadow: 0 0 40px rgba(59, 130, 246, 0.4);">IAudit <span style="font-weight:300; opacity:0.9; color: #e2e8f0;">Intelligence</span></div>
+        <div class="brand-title-large" style="text-shadow: 0 0 40px rgba(59, 130, 246, 0.4);">IAudit</div>
         <div class="brand-subtitle-large" style="color: #94a3b8; letter-spacing: 0.15em;">Sistema de Monitoramento Fiscal Automatizado</div>
     </div>
 </div>
@@ -115,7 +101,7 @@ st.markdown("""
 
 
 # ─── 2. VISÃO GERAL (KPI CARDS) ──────────────────────────────────────
-st.markdown("<h3>📊 Visão Geral do Sistema</h3>", unsafe_allow_html=True)
+st.markdown("<h3>Visão Geral do Sistema</h3>", unsafe_allow_html=True)
 
 stats = fetch("/api/dashboard/stats")
 if not stats: stats = {}
@@ -165,7 +151,7 @@ bento_html = f"""
 
 <div class="bento-item" style="grid-column: span 2;">
 
-<div class="bento-title">🏢 Empresas Monitoradas Ativas</div>
+<div class="bento-title">Empresas Monitoradas Ativas</div>
 
 <div class="bento-value">{empresas}</div>
 
@@ -257,7 +243,7 @@ with c1:
 
 with c2:
 
-    st.markdown('<h3 style="margin-bottom: 1.5rem;">📊 Distribuição</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin-bottom: 1.5rem;">Distribuição</h3>', unsafe_allow_html=True)
 
     if stats:
 
@@ -310,65 +296,88 @@ tab1, tab2 = st.tabs(["Pendências Fiscais", "Fila de Processamento"])
 with tab1:
     alerts = fetch("/api/dashboard/alerts", {"limite": 50})
     if alerts:
-        # Custom Glass Table HTML for Alerts
-        table_html = '<table class="iaudit-table"><thead><tr><td class="label">EMPRESA</td><td class="label">CNPJ</td><td class="label">TIPO</td><td class="label">DATA</td><td class="label">STATUS</td></tr></thead><tbody>'
+        # Dataframe for Alerts
+        df_alerts = pd.DataFrame(alerts)
         
-        for alert in alerts:
-            status_cls = "highlight-error" if alert.get('situacao') in ['negativa', 'irregular'] else "highlight-success"
-            
-            # Format CNPJ
-            cnpj = alert.get('cnpj', '')
-            if len(cnpj) == 14:
-                cnpj = f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
-
-            table_html += f"""
-            <tr>
-                <td style='font-weight: 600; color: #fff;'>{alert.get('razao_social')}</td>
-                <td style='color: #94a3b8; font-family: monospace;'>{cnpj}</td>
-                <td>{alert.get('tipo', '').upper().replace('_', ' ')}</td>
-                <td>{alert.get('data_execucao', '')[:10]}</td>
-                <td><span class='{status_cls}'>{alert.get('situacao', '').upper()}</span></td>
-            </tr>
-            """
-        table_html += '</tbody></table>'
-        st.markdown(table_html, unsafe_allow_html=True)
+        # Formatting
+        if 'data_execucao' in df_alerts.columns:
+            df_alerts['data_execucao'] = pd.to_datetime(df_alerts['data_execucao']).dt.strftime('%d/%m/%Y')
+        
+        st.dataframe(
+            df_alerts,
+            column_config={
+                "razao_social": "Empresa",
+                "cnpj": "CNPJ",
+                "tipo": "Tipo",
+                "data_execucao": "Data",
+                "situacao": st.column_config.TextColumn("Status"),
+                "detalhes": None  # Hide details
+            },
+            hide_index=True,
+            use_container_width=True
+        )
     else:
         st.info("Nenhuma pendência fiscal crítica encontrada.")
 
 with tab2:
     upcoming = fetch("/api/dashboard/upcoming", {"limite": 20})
     if upcoming:
-        # Custom Glass Table HTML for Upcoming
-        table_html = '<table class="iaudit-table"><thead><tr><td class="label">EMPRESA</td><td class="label">CNPJ</td><td class="label">TIPO</td><td class="label">AGENDADO PARA</td></tr></thead><tbody>'
+        # Dataframe for Upcoming
+        df_upcoming = pd.DataFrame(upcoming)
         
-        for item in upcoming:
-            # Format CNPJ
-            cnpj = item.get('cnpj', '')
-            if len(cnpj) == 14:
-                cnpj = f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
+        # Formatting
+        if 'data_agendada' in df_upcoming.columns:
+            df_upcoming['data_agendada'] = pd.to_datetime(df_upcoming['data_agendada']).dt.strftime('%d/%m/%Y %H:%M')
 
-            # Format Date
-            data_agendada = item.get('data_agendada', '')
-            try:
-                dt = data_agendada.split('T')[0]
-                hr = data_agendada.split('T')[1][:5]
-                data_fmt = f"{dt} {hr}"
-            except:
-                data_fmt = data_agendada
-
-            table_html += f"""
-            <tr>
-                <td style='font-weight: 600; color: #fff;'>{item.get('razao_social')}</td>
-                <td style='color: #94a3b8; font-family: monospace;'>{cnpj}</td>
-                <td>{item.get('tipo', '').upper().replace('_', ' ')}</td>
-                <td style='color: #60a5fa;'>{data_fmt}</td>
-            </tr>
-            """
-        table_html += '</tbody></table>'
-        st.markdown(table_html, unsafe_allow_html=True)
+        st.dataframe(
+            df_upcoming,
+            column_config={
+                "razao_social": "Empresa",
+                "cnpj": "CNPJ",
+                "tipo": "Tipo",
+                "data_agendada": "Agendado Para",
+                "status": "Status"
+            },
+            hide_index=True,
+            use_container_width=True
+        )
     else:
         st.info("Nenhuma consulta agendada para breve.")
 
+
+
+
+# ─── MONITORAMENTO GERAL (PLANILHA) ──────────────────────────────────
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<h3>Monitoramento Geral (Planilha)</h3>", unsafe_allow_html=True)
+
+# Fetch all companies for the general spreadsheet
+all_companies = fetch("/api/empresas") 
+if all_companies:
+    df_all = pd.DataFrame(all_companies)
+    
+    # Filter/Rename cols if they exist
+    cols_to_show = ['cnpj', 'razao_social', 'situacao_cadastral', 'uf', 'municipio', 'natureza_juridica']
+    cols_exist = [c for c in cols_to_show if c in df_all.columns]
+    
+    df_display = df_all[cols_exist].copy()
+    
+    st.dataframe(
+        df_display,
+        column_config={
+            "cnpj": "CNPJ",
+            "razao_social": "Razão Social",
+            "situacao_cadastral": st.column_config.TextColumn("Situação", help="Situação Cadastral na Receita"),
+            "uf": "UF",
+            "municipio": "Município",
+            "natureza_juridica": "Natureza Jurídica"
+        },
+        use_container_width=True,
+        hide_index=True,
+        height=400 
+    )
+else:
+    st.info("Nenhum dado disponível para o monitoramento geral.")
 
 
 # ─── FOOTER ─────────────────────────────────────────────────────────
