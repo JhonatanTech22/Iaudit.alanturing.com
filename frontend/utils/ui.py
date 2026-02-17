@@ -41,12 +41,12 @@ def load_css():
 
         # Inject Global Fixed Logo (Top-Left)
         st.markdown("""
-        <div class="fixed-top-logo">
-            <svg class="fixed-logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="ia-global-branding">
+            <svg class="ia-logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L3 7V12C3 17.52 7.03 22 12 22C16.97 22 21 17.52 21 12V7L12 2Z" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M9 12L11 14L15 10" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="fixed-logo-text">IAudit</span>
+            <span class="ia-logo-text">IAudit</span>
         </div>
         """, unsafe_allow_html=True)
 

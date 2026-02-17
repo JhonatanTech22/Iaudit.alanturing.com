@@ -36,6 +36,7 @@ st.markdown("""
     </div>
     <div class="hero-badge">Sistema IAudit</div>
     <h1 class="hero-title">IAudit</h1>
+    <div style="font-size: 1.2rem; margin-top: -1rem; color: var(--text-accent); font-weight: 500; opacity: 0.9;">Plataforma de Automação Fiscal</div>
     <p class="hero-subtitle">
         Monitoramento fiscal e conformidade em tempo real. <br>
         Simples, Rápido e Eficiente.

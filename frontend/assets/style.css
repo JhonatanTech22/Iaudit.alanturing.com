@@ -34,28 +34,27 @@
     --skeleton-bg: rgba(255, 255, 255, 0.04);
 }
 
-/* ─── GLOBAL FIXED LOGO ────────────────────────────────────────────── */
-.fixed-top-logo {
+/* ─── GLOBAL FIXED LOGO (FORCED REFRESH) ────────────────────────────── */
+.ia-global-branding {
     position: fixed;
     top: 15px;
     left: 20rem;
     /* Adjusted to clear expanded sidebar */
     z-index: 999999;
     pointer-events: none;
-    /* Allow clicking through if needed, but the user wants it visible */
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(12px);
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-highlight);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    animation: slideInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    animation: iaSlideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideInDown {
+@keyframes iaSlideDown {
     from {
         transform: translateY(-100%);
         opacity: 0;
@@ -67,19 +66,20 @@
     }
 }
 
-.fixed-logo-text {
+.ia-logo-text {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: #fff;
     letter-spacing: -0.5px;
 }
 
-.fixed-logo-icon {
-    width: 24px;
-    height: 24px;
-    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+.ia-logo-icon {
+    width: 26px;
+    height: 26px;
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6));
 }
+
 
 /* ─── GLOBAL OVERRIDES ─────────────────────────────────────────────── */
 /* Force Deep Dark Background with Subtle Noise */
