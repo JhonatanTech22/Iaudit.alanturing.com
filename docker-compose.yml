@@ -2,30 +2,35 @@ version: "3.8"
 
 services:
   backend:
+    # O Swarm precisa de uma IMAGEM pronta. 
+    # Como não temos uma, vamos tentar forçar o build localmente ou você precisará criar uma imagem no DockerHub.
+    # Por enquanto, mantivemos a estrutura, mas removemos as linhas proibidas.
+    image: laudit-backend:latest 
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: iaudit-backend
     ports:
       - "8000:8000"
+    # REMOVIDO: env_file (não existe o arquivo)
+    # REMOVIDO: container_name (o Swarm não aceita nomes fixos)
     volumes:
       - ./credentials:/app/credentials:ro
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/api/health')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   frontend:
+    image: laudit-frontend:latest
     build:
-      context: ./frontend
+      context: ./front-end
       dockerfile: Dockerfile
-    container_name: iaudit-frontend
     ports:
       - "8501:8501"
+    # REMOVIDO: container_name
     environment:
       - BACKEND_URL=http://backend:8000
     depends_on:
       - backend
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
