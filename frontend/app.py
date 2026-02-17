@@ -16,7 +16,7 @@ with st.sidebar:
         <div style="font-weight: 700; font-size: 1.5rem; color: #f8fafc; letter-spacing: -0.5px;">
             <span style="color: #60a5fa;">IAudit</span>
         </div>
-        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">System v2.0</div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">System v2.1 (Refreshed)</div>
     </div>
     """, unsafe_allow_html=True)
     
