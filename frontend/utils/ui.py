@@ -9,10 +9,12 @@ def load_css():
     """
     # Get the absolute path to the project root (assuming this file is in frontend/utils/)
     # frontend/utils/ui.py -> frontend/utils -> frontend -> root
+    # frontend/utils/ui.py -> frontend/utils
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(os.path.dirname(current_dir))
+    # Go up one level to get the frontend root (or /app in Docker)
+    frontend_root = os.path.dirname(current_dir)
     
-    css_path = os.path.join(project_root, "frontend", "assets", "style.css")
+    css_path = os.path.join(frontend_root, "assets", "style.css")
     
     try:
         # Inject Fonts explicitly to ensure loading
