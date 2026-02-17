@@ -486,14 +486,148 @@ div[data-testid="stTextInput"] input {
     margin-top: 2rem;
 }
 
-@media (max-width: 1024px) {
-    .bento-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 @media (max-width: 768px) {
     .bento-container {
         grid-template-columns: 1fr;
     }
+}
+
+/* ─── NEW DASHBOARD UPGRADE (KPIs & BRANDING) ──────────────────────── */
+
+/* 1. Refined Header */
+.brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand-logo-large {
+    width: 60px;
+    height: 60px;
+    margin-right: 20px;
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+}
+
+.brand-title-large {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    /* Extra Bold */
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    text-transform: uppercase;
+}
+
+.brand-subtitle-large {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 5px;
+    opacity: 0.7;
+}
+
+/* 2. KPI Cards (Overview) */
+.kpi-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.kpi-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kpi-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.1;
+}
+
+/* KPI Variants */
+.kpi-success {
+    border-left: 4px solid #4ade80;
+}
+
+.kpi-success .kpi-value {
+    color: #4ade80;
+    text-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+}
+
+.kpi-success:hover {
+    box-shadow: 0 10px 30px rgba(74, 222, 128, 0.15);
+}
+
+.kpi-warning {
+    border-left: 4px solid #fbbf24;
+}
+
+.kpi-warning .kpi-value {
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+.kpi-warning:hover {
+    box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
+}
+
+.kpi-danger {
+    border-left: 4px solid #f87171;
+}
+
+.kpi-danger .kpi-value {
+    color: #f87171;
+    text-shadow: 0 0 20px rgba(248, 113, 113, 0.2);
+}
+
+.kpi-danger:hover {
+    box-shadow: 0 10px 30px rgba(248, 113, 113, 0.15);
+}
+
+/* Icon Styles within KPI */
+.kpi-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.1;
+    width: 60px;
+    height: 60px;
 }
