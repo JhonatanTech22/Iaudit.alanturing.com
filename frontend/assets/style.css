@@ -8,30 +8,76 @@
 
 /* ─── RESET & CORE VARIABLES ───────────────────────────────────────── */
 :root {
-    --bg-deep: #0F0F0F;
-    --bg-card: rgba(255, 255, 255, 0.02);
-    --bg-glass: rgba(15, 15, 15, 0.6);
+    --bg-deep: #05070A;
+    /* Deeper, sleeker blue-black */
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-glass: rgba(5, 7, 10, 0.75);
 
-    --text-primary: #FFFFFF;
-    --text-secondary: #E2E8F0;
-    /* Brightened from #CBD5E1 */
-    --text-accent: #93e3ff;
-    /* Brightened from #7dd3fc */
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-accent: #3b82f6;
 
-    --primary-gradient: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-    --glow-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+    --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --accent-gradient: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    --glow-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
 
-    --border-subtle: rgba(255, 255, 255, 0.05);
-    --border-highlight: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-highlight: rgba(255, 255, 255, 0.12);
 
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 24px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 32px;
     --radius-pill: 9999px;
 
     /* Smart UI Tokens */
-    --fluid-h1: clamp(1.8rem, 4vw + 1rem, 3.5rem);
-    --skeleton-bg: rgba(255, 255, 255, 0.05);
+    --fluid-h1: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+    --skeleton-bg: rgba(255, 255, 255, 0.04);
+}
+
+/* ─── GLOBAL FIXED LOGO ────────────────────────────────────────────── */
+.fixed-top-logo {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 999999;
+    pointer-events: none;
+    /* Allow clicking through if needed, but the user wants it visible */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-highlight);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    animation: slideInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fixed-logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.fixed-logo-icon {
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
 }
 
 /* ─── GLOBAL OVERRIDES ─────────────────────────────────────────────── */
@@ -125,9 +171,52 @@ div[data-testid="stMetric"],
 
 div[data-testid="stMetric"]:hover,
 .glass-card:hover {
-    border-color: rgba(59, 130, 246, 0.3) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    border-color: rgba(59, 130, 246, 0.4) !important;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.glass-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.card-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 div[data-testid="stMetricLabel"] {
