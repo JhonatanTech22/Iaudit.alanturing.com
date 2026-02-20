@@ -60,11 +60,9 @@ settings_data = fetch("/api/comunicacao/settings") or {
 # ═══════════════════════════════════════════════════════════════════════
 
 st.markdown("""
-<div class="glass-card" style="margin-bottom: 2rem; padding: 1.5rem;">
-    <h1 style='margin: 0; color: #f8fafc; font-size: 1.8rem;'>Centro de Controle de Mensagens</h1>
-    <p style='margin: 0.5rem 0 0 0; color: #94a3b8; font-size: 0.95rem;'>
-        Monitore a automação e realize disparos manuais de cobrança e avisos.
-    </p>
+<div style="margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(90deg, rgba(30,64,175,0.3) 0%, rgba(30,58,138,0.08) 100%); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);">
+    <h1 style="margin: 0; font-size: 1.8rem; color: #f8fafc;">Centro de Controle de Mensagens</h1>
+    <p style="margin: 0.3rem 0 0; color: #94a3b8; font-size: 0.9rem;">Monitore a automação e realize disparos manuais de cobrança e avisos</p>
 </div>
 """, unsafe_allow_html=True)
 

@@ -182,7 +182,7 @@ class ForceQueryRequest(BaseModel):
 # ─── Cobrança Bradesco ──────────────────────────────────────────────
 
 class BoletoCreate(BaseModel):
-    empresa_id: str
+    empresa_id: str | None = None
     nuFatura: str
     vlNominal: int  # em centavos
     dataVencimento: date
@@ -193,6 +193,9 @@ class BoletoCreate(BaseModel):
     pagador_uf: str
     pagador_cidade: str
     pagador_bairro: str
+    pagador_email: str | None = None
+    pagador_whatsapp: str | None = None
+    pagador_celular: str | None = None
 
 
 class BoletoResponse(BaseModel):

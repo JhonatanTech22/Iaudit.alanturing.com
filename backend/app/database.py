@@ -124,17 +124,37 @@ def get_empresa_by_id(empresa_id: str) -> dict | None:
 
 
 def get_empresa_by_cnpj(cnpj: str) -> dict | None:
-    """Get an empresa by CNPJ."""
+    """Get an empresa by CNPJ. Handles both formatted and unformatted input."""
+    # Normalize to digits only for comparison
+    cnpj_digits = "".join(filter(str.isdigit, cnpj))
+
     if DEMO_MODE:
         for emp in DEMO_EMPRESAS:
-            if emp.get("cnpj") == cnpj:
+            stored_digits = "".join(filter(str.isdigit, str(emp.get("cnpj", ""))))
+            if stored_digits == cnpj_digits:
                 return emp
         return None
 
     sb = get_supabase()
     if sb is None: return get_empresa_by_cnpj(cnpj)
 
+    # Try exact match first (formatted)
     result = sb.table("empresas").select("*").eq("cnpj", cnpj).execute()
+    if result.data:
+        return result.data[0]
+
+    # Try formatted version: XX.XXX.XXX/XXXX-XX
+    if len(cnpj_digits) == 14:
+        formatted = (
+            f"{cnpj_digits[:2]}.{cnpj_digits[2:5]}.{cnpj_digits[5:8]}/"
+            f"{cnpj_digits[8:12]}-{cnpj_digits[12:]}"
+        )
+        result = sb.table("empresas").select("*").eq("cnpj", formatted).execute()
+        if result.data:
+            return result.data[0]
+
+    # Try unformatted digits
+    result = sb.table("empresas").select("*").eq("cnpj", cnpj_digits).execute()
     return result.data[0] if result.data else None
 
 

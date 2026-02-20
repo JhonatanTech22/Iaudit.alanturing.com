@@ -27,11 +27,9 @@ def validate_cnpj_frontend(cnpj: str) -> bool:
 
 # ─── Header (Standardized) ──────────────────────────────────────────
 st.markdown("""
-<div class="brand-header">
-    <div style="z-index: 1;">
-        <div class="brand-title-large" style="font-size: 2.5rem;">Upload de Empresas</div>
-        <div class="brand-subtitle-large">Cadastro em lote via CSV ou Excel</div>
-    </div>
+<div style="margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(90deg, rgba(30,64,175,0.3) 0%, rgba(30,58,138,0.08) 100%); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);">
+    <h1 style="margin: 0; font-size: 1.8rem; color: #f8fafc;">Upload de Empresas</h1>
+    <p style="margin: 0.3rem 0 0; color: #94a3b8; font-size: 0.9rem;">Cadastro em lote via CSV ou Excel</p>
 </div>
 """, unsafe_allow_html=True)
 

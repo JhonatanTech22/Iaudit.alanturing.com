@@ -63,39 +63,16 @@ def fetch(endpoint: str, params: dict | None = None):
 
 
 
-# ─── HERO SECTION ───────────────────────────────────────────────────
-
-# ─── SIDEBAR BRANDING ───────────────────────────────────────────────
-# ─── SIDEBAR BRANDING ───────────────────────────────────────────────
+# ─── SIDEBAR ────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("""
-    <div class="brand-sidebar">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L3 7V12C3 17.52 7.03 22 12 22C16.97 22 21 17.52 21 12V7L12 2Z" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9 12L11 14L15 10" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="brand-name">IAudit</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    if st.button("🔄 Atualizar Dados", use_container_width=True):
+    if st.button("Atualizar Dados", use_container_width=True):
         st.rerun()
 
-# ─── HERO SECTION (MEGA BRAND) ──────────────────────────────────────
-# ─── 1. REFINED HEADER (BRANDING) ─────────────────────────────────────
+# ─── HEADER ─────────────────────────────────────────────────────────
 st.markdown("""
-<div class="brand-header">
-    <div style="position: relative;">
-        <div style="position: absolute; inset: -10px; background: radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); z-index: 0;"></div>
-       <div style="position: absolute; inset: -10px; background: radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); z-index: 0;"></div>
-        <!-- Logo removed for clean design -->
-        <div style="height: 60px;"></div>
-    </div>
-    <div style="z-index: 1;">
-        <div class="brand-title-large" style="text-shadow: 0 0 40px rgba(59, 130, 246, 0.4);">IAudit</div>
-        <div class="brand-subtitle-large" style="color: #94a3b8; letter-spacing: 0.15em;">Sistema de Monitoramento Fiscal Automatizado</div>
-    </div>
+<div style="margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(90deg, rgba(30,64,175,0.3) 0%, rgba(30,58,138,0.08) 100%); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);">
+    <h1 style="margin: 0; font-size: 1.8rem; color: #f8fafc;">Painel de Monitoramento</h1>
+    <p style="margin: 0.3rem 0 0; color: #94a3b8; font-size: 0.9rem;">Visão geral do sistema de auditoria fiscal automatizado</p>
 </div>
 """, unsafe_allow_html=True)
 

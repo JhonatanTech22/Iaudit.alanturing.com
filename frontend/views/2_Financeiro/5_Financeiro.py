@@ -95,11 +95,9 @@ inadimplencia = (vencidos / total_emitido * 100) if total_emitido > 0 else 0
 # ═══════════════════════════════════════════════════════════════════════
 
 st.markdown("""
-<div class="glass-card" style="margin-bottom: 2rem; padding: 1.5rem;">
-    <h1 style='margin: 0; color: #f8fafc; font-size: 1.8rem;'>Gestão de Cobranças</h1>
-    <p style='margin: 0.5rem 0 0 0; color: #94a3b8; font-size: 0.95rem;'>
-        Registro, monitoramento de boletos e automação de cobranças recorrentes.
-    </p>
+<div style="margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(90deg, rgba(30,64,175,0.3) 0%, rgba(30,58,138,0.08) 100%); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);">
+    <h1 style="margin: 0; font-size: 1.8rem; color: #f8fafc;">Gestão de Cobranças</h1>
+    <p style="margin: 0.3rem 0 0; color: #94a3b8; font-size: 0.9rem;">Registro, monitoramento de boletos e automação de cobranças recorrentes</p>
 </div>
 """, unsafe_allow_html=True)
 

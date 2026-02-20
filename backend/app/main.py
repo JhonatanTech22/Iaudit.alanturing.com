@@ -17,6 +17,8 @@ from app.routes import empresas, consultas, dashboard, query, pdf, cobrancas, co
 from app.services.scheduler import process_pending_queries, create_daily_schedules
 from app.services.monitoring import monitor_boletos
 from app.services.billing import billing_service
+from app.services.boleto_scheduler import check_boleto_vencimentos
+from app.services.notification_queue import notification_queue
 
 # ─── Logging ─────────────────────────────────────────────────────────
 
@@ -31,11 +33,19 @@ logger = logging.getLogger(__name__)
 
 scheduler = AsyncIOScheduler()
 
+_queue_task: asyncio.Task | None = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle manager."""
+    global _queue_task
+
     logger.info("🚀 IAudit starting up...")
+
+    # ── Start Notification Queue Worker ──────────────────────────────
+    _queue_task = asyncio.create_task(notification_queue.start_worker())
+    logger.info("📬 Notification queue worker started.")
 
     # Job 1: Process pending queries every N minutes
     scheduler.add_job(
@@ -58,13 +68,7 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
     )
 
-    scheduler.start()
-    logger.info(
-        f"📅 Scheduler started: polling every {settings.scheduler_poll_interval_minutes}min, "
-        f"daily at {settings.scheduler_daily_hour:02d}:{settings.scheduler_daily_minute:02d}"
-    )
-
-    # Job 3: Monitor Boletos Status (Daily or Hourly)
+    # Job 3: Monitor Boletos Status (Hourly)
     scheduler.add_job(
         monitor_boletos,
         trigger=IntervalTrigger(minutes=60),
@@ -82,9 +86,31 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
     )
 
+    # Job 5: D-1 / D+1 Vencimento Alerts (Daily at configured hour)
+    scheduler.add_job(
+        check_boleto_vencimentos,
+        trigger=CronTrigger(
+            hour=settings.notification_vencimento_hour,
+            minute=0,
+        ),
+        id="boleto_vencimentos",
+        name="Check Boleto Vencimentos (D-1/D+1)",
+        replace_existing=True,
+    )
+
+    scheduler.start()
+    logger.info(
+        f"📅 Scheduler started: polling every {settings.scheduler_poll_interval_minutes}min, "
+        f"daily at {settings.scheduler_daily_hour:02d}:{settings.scheduler_daily_minute:02d}, "
+        f"vencimento check at {settings.notification_vencimento_hour:02d}:00"
+    )
+
     yield
 
     # Shutdown
+    notification_queue.stop_worker()
+    if _queue_task:
+        _queue_task.cancel()
     scheduler.shutdown(wait=False)
     logger.info("🛑 IAudit shutting down...")
 
@@ -142,4 +168,5 @@ def api_health():
         "status": "ok",
         "scheduler_running": scheduler.running,
         "jobs": jobs,
+        "notification_queue": notification_queue.stats,
     }

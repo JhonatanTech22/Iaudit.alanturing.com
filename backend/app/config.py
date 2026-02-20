@@ -66,6 +66,10 @@ class Settings(BaseSettings):
     bradesco_acess_esc10: str = Field("4912110", description="Acessório Escritural 10 (Fixed: 4912110)")
     bradesco_sandbox: bool = Field(True, description="Use Bradesco Sandbox environment")
 
+    # Notification Queue
+    notification_max_retries: int = Field(3, description="Max retry attempts for failed notifications")
+    notification_vencimento_hour: int = Field(7, description="Hour (UTC) to run D-1/D+1 vencimento check")
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 
